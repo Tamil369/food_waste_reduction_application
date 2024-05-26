@@ -73,6 +73,17 @@ app.get('/', (req, res) => {
     res.sendFile(path.join(__dirname, 'public', 'login.html'));
 });
 
+// Signout route (POST method)
+app.post('/signout', (req, res) => {
+    req.session.destroy((err) => {
+      if (err) {
+        console.log("session is destoryed");
+        return res.status(500).send('Failed to sign out.');
+      }
+      res.send('Successfully signed out.');
+    });
+});
+  
 
 app.post('/check-absent', (req, res) => {
     if (!req.session.user.username) {
