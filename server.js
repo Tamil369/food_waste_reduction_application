@@ -32,14 +32,14 @@ db.connect((err) => {
     
 });
 
-db.query('SELECT * FROM Profile', (err, results) => {
-    if (err) {
-      console.error('Database query error:', err);
-      return;
-    }
-    console.log('Query results:', results);
-    // Process results here
-  });
+// db.query('SELECT * FROM Profile', (err, results) => {
+//     if (err) {
+//       console.error('Database query error:', err);
+//       return;
+//     }
+//     console.log('Query results:', results);
+//     // Process results here
+//   });
   
 //let query = 'SELECT * FROM Profile ';
     //   db.query(query, (error, results) => {
