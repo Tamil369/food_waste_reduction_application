@@ -75,6 +75,7 @@ app.get('/', (req, res) => {
 
 // Signout route (POST method)
 app.post('/signout', (req, res) => {
+    try{
     req.session.destroy((err) => {
       if (err) {
         console.log("session is destoryed");
@@ -82,6 +83,10 @@ app.post('/signout', (req, res) => {
       }
       res.send('Successfully signed out.');
     });
+    }catch(error)
+    {
+
+    }
 });
   
 
