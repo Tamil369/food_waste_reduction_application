@@ -1,0 +1,427 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Template</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
+    <style>
+        ul, ol, ls, li {
+            text-align: center;
+            padding-left: 0;
+        }
+        .my {
+            display: flex;
+            justify-content: space-between;
+            align-items: center; /* Vertically center align items */
+        }
+        .logo {
+            margin: 1% 3% 5% 2%;
+        }
+        .navbar-nav {
+            padding: 0 10px;
+        }
+        .dropdown-menu {
+            top: 100%;
+        }
+
+        .navbar-brand {
+            margin: 0 auto;
+            display: block; 
+        }
+
+
+        /*****************WRITE YOUR CSS CODE DOWN ***************DONT CHANGE ANYTHING**************** */
+        .navbar-brand 
+        {
+           
+            display: block;
+            position: absolute;
+            left: 50%;
+            transform: translateX(-50%);
+            top: 10px;
+        }
+        /* Existing CSS */
+        .container {
+            margin: 10% 5%;
+            display: block;
+            justify-content:center; /* Adjust space between items */
+            align-items: center; /* Vertically center align items */
+            border: 5.6px solid #938787;
+            border-radius: 8px;
+            box-shadow: 50px 70px 10px rgba(0, 0, 0, 0.1);
+            margin-top: 10%;
+            padding: 5%;
+        }
+        .container > #checking > input
+        {
+            margin-left: 10%;
+            width: 15px;
+        }
+        .child {
+            margin: 10px;
+        }
+
+        input {
+            width: 150px;
+            padding: 10px;
+            margin-bottom: 20px;
+            border: none;
+            border-bottom: 2px dotted #000000;
+            outline: none;
+        }
+
+        form {
+            padding: auto 10%;
+            padding-left: 10%;
+        }
+
+        .out {
+            margin: 10% 5%;
+            margin-right: 20%;
+            margin-left: 10%;
+        }
+
+        .para {
+            padding: 10px;
+        }
+
+        .num {
+            color: darkslategray;
+            display: inline;
+            /* margin-right: 100px; */ /* Remove this line */
+            margin: 10px;
+            padding-left: 100px;
+            display: block;
+            font-variant-numeric: tabular-nums;
+            margin-bottom: 15px;
+        }
+        .to-change-student
+        {
+            display: block;
+        }
+        img
+        {
+            margin-left: 20%;
+        }
+        /* Style for the profile overlay */
+        .overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0,0,0,0.7);
+            z-index: 1000;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .overlay-content {
+            background-color: white;
+            padding: 20px;
+            border-radius: 8px;
+            width: 80%;
+            max-width: 500px;
+            text-align: center;
+            position: relative;
+            top: 70px;
+            left: 10%;
+            right: 10%;
+        }
+
+        .closebtn {
+            position: absolute;
+            top: 10px;
+            right: 25px;
+            font-size: 30px;
+            cursor: pointer;
+            color: rgb(177, 126, 126);
+        }
+
+
+
+
+
+    </style>
+
+    <script>
+        /*****************WRITE YOUR JS CODE DOWN ***************DONT CHANGE ANYTHING**************** */
+        
+
+
+
+
+    </script>
+
+
+</head>
+<body>
+    
+    <nav class="navbar navbar-dark bg-dark my" aria-label="First navbar example">
+        <div class="container-fluid">
+            <div class="col-md-3 mb-2 mb-md-0 logo">
+                <a href="" class="d-inline-flex link-body-emphasis text-decoration-none" >
+                    <!-- Insert logo image -->
+                    <img src=" " alt="Description of the image" height="25px" width="25px" >
+                </a>
+            </div>
+            <div style=" display: flex; justify-content: center;">
+            <a class="navbar-brand" href="#" style="margin-left: 1%;" >Food >> Money</a>
+           </div> 
+           <button class="navbar-toggler collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#navbarsExample01" aria-controls="navbarsExample01" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+    
+            <div class="navbar-collapse collapse" id="navbarsExample01">
+                <ul class="navbar-nav me-auto mb-2">
+                    <li class="nav-item">
+                        <a class="nav-link active" aria-current="page" href="./admine-home.html">Home</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link active" aria-current="page" href="./choose-admin.html">choose-food</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#" onclick="showProfileOverlay(event)">Profile</a>
+
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link active" aria-current="page" href="./make-admine.html">Make Admine</a>
+                    </li>
+                    
+                    
+                    <li class="nav-item">
+                        <a class="nav-link active" aria-current="page" href="./login.html">Sign Out<span style="margin-left: 10px;"></span><svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" class="bi bi-box-arrow-right" viewBox="0 0 16 16">
+                            <path fill-rule="evenodd" d="M10 12.5a.5.5 0 0 1-.5.5h-8a.5.5 0 0 1-.5-.5v-9a.5.5 0 0 1 .5-.5h8a.5.5 0 0 1 .5.5v2a.5.5 0 0 0 1 0v-2A1.5 1.5 0 0 0 9.5 2h-8A1.5 1.5 0 0 0 0 3.5v9A1.5 1.5 0 0 0 1.5 14h8a1.5 1.5 0 0 0 1.5-1.5v-2a.5.5 0 0 0-1 0z"/>
+                            <path fill-rule="evenodd" d="M15.854 8.354a.5.5 0 0 0 0-.708l-3-3a.5.5 0 0 0-.708.708L14.293 7.5H5.5a.5.5 0 0 0 0 1h8.793l-2.147 2.146a.5.5 0 0 0 .708.708z"/>
+                          </svg></a>
+                    </li>
+                    
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+
+
+
+    <!--*****************WRITE YOUR HTML CODE DOWN **************DONT CHANGE ANYTHING***************** */-->
+
+
+    <div class="out">  
+        <div class="container">  
+            
+            
+            <div class="to-change-student" id="student-detail" style="display: block;">
+                <form>
+                    <p style="display: flex;">
+                        <h4 class="para" > Number Of Students Going to have food In Hostel :</h4> 
+                    </p>
+                    <hr>
+                    <h5 class="num">  
+                        <p>Total Lunch: <span id="totalLunch">0</span></p>
+                        <p>Total Dinner: <span id="totalDinner">0</span></p>
+                        <p>Total Users: <span id="totalRows">0</span></p>
+                    </h5> 
+                    
+                </form>
+            </div>
+            <div class="to-change-student" id="after-11" style="display: none;">
+                <form>
+                    <img src="./foodpanda-food.gif"  style="width: 40%; ">
+                    <br>
+                    
+                    <h5 class="" style="text-align: center; margin: 10px; margin-left: 10%;">Users are  Choosing ............ </h5> 
+                    
+                </form>
+            </div>
+            <hr>
+            <div  id="checking">
+                <h3>Check Absent</h3>
+                <input type="checkbox" id="forlunch">
+                <label for="forlunch">LUNCH</label>
+                <input type="checkbox" id="fordinner">
+                <label for="fordinner">DINNER</label>
+                <br>
+                <button type="button" id="buttonchecking" class="btn btn-outline-info" style="margin:2% auto 10px 40%;" onclick="checking(event)">Check</button>
+
+                <div id="todisplay"> </div>
+
+            
+            </div>
+            
+            
+
+
+        </div>
+    </div>
+
+    <!-- overlay for profile -->
+    <div id="profileOverlay" class="overlay" style="display: none;">
+        <div class="overlay-content">
+            
+            <h2>Your Profile</h2>
+            <hr> 
+            <span class="closebtn" onclick="closeProfileOverlay()">&times;</span>
+            <p id="profileName"></p>
+            <p id="profileUserId"></p>
+            <p id="profileRegNo"></p>
+            <p id="profilePhone"></p>
+            <p id="profileLunch"></p>
+            <p id="profileDinner"></p>
+        </div>
+    </div>
+
+
+
+
+
+    <script>
+        /*****************WRITE YOUR JS CODE DOWN ***************DONT CHANGE ANYTHING**************** */
+        function updateContentBasedOnTime() {
+            const now = new Date();
+            const hours = now.getHours();
+            const after = document.getElementById('after-11');
+            const student = document.getElementById('student-detail');
+                
+            if (hours > 10 & hours < 18) // 10 and 18
+            { 
+                after.style.display='none';
+                student.style.display='block';
+            }    
+            else
+            {
+                after.style.display='block';
+                student.style.display='none';
+            }
+        }
+        updateContentBasedOnTime();
+
+        function checking(event) {
+            const forLunchChecked = document.getElementById('forlunch').checked;
+            const forDinnerChecked = document.getElementById('fordinner').checked;
+
+            let mealType;
+
+            if (forLunchChecked && forDinnerChecked) {
+                mealType = 'both';
+            } else if (forLunchChecked) {
+                mealType = 'lunch';
+            } else if (forDinnerChecked) {
+                mealType = 'dinner';
+            } else {
+                mealType = 'none';
+            }
+
+            switch (mealType) {
+                case 'lunch':
+                    fetchAbsentData('lunch');
+                    break;
+                case 'dinner':
+                    fetchAbsentData('dinner');
+                    break;
+                case 'both':
+                    fetchAbsentData('both');
+                    break;
+                default:
+                    document.getElementById('todisplay').textContent = 'No options selected';
+                    break;
+            }
+        }
+
+        function fetchAbsentData(meal) {
+            fetch('/check-absent', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ meal: meal })
+            })
+            .then(response => response.json())
+            .then(data => {
+                let displayText = '<ol> <hr>';
+                data.forEach(item => {
+                    displayText += `<li>Name: ${item.name}, Phone: ${item.phone},  Year: ${item.year},  Dept: ${item.dept} </li> <hr>`;
+
+                });
+                displayText += '</ol>';
+                document.getElementById('todisplay').innerHTML = displayText;
+            })
+            .catch(error => {
+                console.error('Error fetching absent data:', error);
+                document.getElementById('todisplay').textContent = 'Error fetching absent data. Please try again later.';
+            });
+        }
+
+
+        document.addEventListener('DOMContentLoaded', () => {
+            fetch('/admin-main-data')
+                .then(response => response.json())
+                .then(data => {
+                    document.getElementById('totalLunch').textContent = data.totalLunch;
+                    document.getElementById('totalDinner').textContent = data.totalDinner;
+                    document.getElementById('totalRows').textContent = data.totalRows;
+                })
+                .catch(error => {
+                    console.error('Error fetching admin data:', error);
+                    alert('Error fetching admin data.  Please try again after login  ');
+                    window.location.href = './login.html';
+                });
+        });
+
+        // Function to show the profile overlay
+        function showProfileOverlay(event) {
+            event.preventDefault(); // Prevent the default link behavior
+            document.getElementById('profileOverlay').style.display = 'block';
+                
+
+            // Fetch profile data from the server
+            fetch('/profile', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                credentials: 'include' // Include cookies for session
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.error) {
+                    alert(data.error);
+                    window.location.href = './login.html';
+                } else {
+                    // Populate the overlay with profile data
+                    document.getElementById('profileName').textContent = `Name: ${data.name}`;
+                    document.getElementById('profileUserId').textContent = `User ID: ${data.user_id}`;
+                    document.getElementById('profileRegNo').textContent = `Reg No: ${data.reg_no}`;
+                    document.getElementById('profilePhone').textContent = `Phone: ${data.phone}`;
+                    document.getElementById('profileLunch').textContent = `Lunch: ${data.lunch}`;
+                    document.getElementById('profileDinner').textContent = `Dinner: ${data.dinner}`;
+                    
+                    // Show the profile overlay
+                }
+            })
+            .catch(error => {
+                console.error('Error fetching profile data:', error);
+            });
+        }
+
+        // Function to close the profile overlay
+        function closeProfileOverlay() {
+            document.getElementById('profileOverlay').style.display = 'none'; // Hide the profile overlay
+        }
+                
+
+
+
+
+    </script>
+
+
+
+
+
+
+</body>
+</html>

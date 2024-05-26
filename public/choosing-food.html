@@ -1,0 +1,512 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Template</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
+    <style>
+        ul, ol, ls, li {
+            text-align: center;
+            padding-left: 0;
+        }
+        .my {
+            display: flex;
+            justify-content: space-between;
+            align-items: center; /* Vertically center align items */
+        }
+        .logo {
+            margin: 1% 3% 5% 2%;
+        }
+        .navbar-nav {
+            padding: 0 10px;
+        }
+        .dropdown-menu {
+            top: 100%;
+        }
+
+        .navbar-brand {
+            margin: 0 auto;
+            display: block; 
+        }
+        body 
+        {
+            background-image:url(./HD\ wallpaper_\ cuisine\,\ food\,\ india\,\ indian\,\ jana\,\ mana.jpeg.jpg);
+            
+        }
+
+        /*****************WRITE YOUR CSS CODE DOWN ***************DONT CHANGE ANYTHING**************** */
+        .navbar-brand 
+        {
+           
+            display: block;
+            position: absolute;
+            left: 50%;
+            transform: translateX(-50%);
+            top: 10px;
+        }
+        .container
+        {
+            background-color:#eae1e1;
+            background-image: url(./HD\ wallpaper_\ cuisine\,\ food\,\ india\,\ indian\,\ jana\,\ mana.jpeg.jpg);
+            margin: 10% 5% ;
+            display: flex;
+            justify-content: center;
+            border: 5.6px solid #938787; /* Add border */
+            border-radius: 8px; /* Add border radius for rounded corners */
+            box-shadow:50px 70px 5px rgba(0, 0, 0, 0.1); /* Add box shadow */
+            margin-top: 10%; 
+        }
+        .child
+        {
+            margin: 10px;
+            
+        }
+        input {
+            width: 15px; /* Adjust as needed */
+            padding: 10px;
+            margin-bottom: 20px;
+            border: none; /* Remove default border */
+            border-bottom: 2px dotted #000000; /* Add bottom border */
+            outline: none; /* Remove outline */
+        }
+        form
+        {
+            padding: auto 10%;
+            padding-left: 10% ;
+            padding-right: 10%;
+        }
+        .out
+        {
+            margin:  10% 5% ;
+            margin-right: 20%;
+            margin-left: 10%;
+        }
+        .btn
+        {
+            
+            margin: 10% auto 10px 40px ;
+        }
+        
+        .for
+        {
+            border:double;
+            margin: 5px;
+            border-radius: 5%;
+            border-color: #75686890;
+            padding: 10px;
+            padding-left: 20px;
+            background-color: #eae1e1;
+        }
+        span
+        {
+            color:rgb(222, 210, 210);
+            text-align: center;
+            padding-left: 35%;
+        }
+        .form-for-food
+        {
+            display: block;
+        }
+        #responce {
+            display: none; 
+            text-align: center; 
+            background-color: #eae1e1;
+            
+        }
+        #cooking-dis {
+            display: none; 
+            /* text-align: center;  */
+            background-color: #eae1e1;
+            
+        }
+        body {
+            transition: opacity 1s ease-out;
+        }
+        .fade-out {
+            opacity: 0;
+        }
+
+         /* Style for the profile overlay */
+         .overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0,0,0,0.7);
+            z-index: 1000;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .overlay-content {
+            background-color: white;
+            padding: 20px;
+            border-radius: 8px;
+            width: 80%;
+            max-width: 500px;
+            text-align: center;
+            position: relative;
+            top: 70px;
+            left: 10%;
+            right: 10%;
+        }
+
+        .closebtn {
+            position: absolute;
+            top: 10px;
+            right: 25px;
+            font-size: 30px;
+            cursor: pointer;
+            color: rgb(177, 126, 126);
+        }
+
+
+
+    </style>
+
+    
+
+</head>
+<body>
+    
+    <nav class="navbar navbar-dark bg-dark my" aria-label="First navbar example">
+        <div class="container-fluid">
+            <div class="col-md-3 mb-2 mb-md-0 logo">
+                <a href="" class="d-inline-flex link-body-emphasis text-decoration-none" >
+                    <!-- Insert logo image -->
+                    <img src=" " alt="Description of the image" height="25px" width="25px" >
+                </a>
+            </div>
+            <div style=" display: flex; justify-content: center;">
+            <a class="navbar-brand" href="#" style="margin-left: 1%;" >Food >> Money</a>
+           </div> 
+           <button class="navbar-toggler collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#navbarsExample01" aria-controls="navbarsExample01" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+    
+            <div class="navbar-collapse collapse" id="navbarsExample01">
+                <ul class="navbar-nav me-auto mb-2">
+                    <li class="nav-item">
+                        <a class="nav-link active" aria-current="page" href="./student-home.html">Home</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#" onclick="showProfileOverlay(event)">Profile</a>
+
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link active" aria-current="page" href="#">QR code</a>
+                    </li>
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle" href="#" data-bs-toggle="dropdown" aria-expanded="false">Contact</a>
+                        <ul class="dropdown-menu">
+                            <li><a class="dropdown-item" href="#">E-mail</a></li>
+                            <li><a class="dropdown-item" href="#">Call </a></li>
+                            <li><a class="dropdown-item" href="#">Letter</a></li>
+                        </ul>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link active" aria-current="page"  id="signout-button" href="./login.html" >Sign Out<svg style="margin-left: 10px;" xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor"  class="bi bi-box-arrow-right" viewBox="0 0 16 16">
+                            <path fill-rule="evenodd" d="M10 12.5a.5.5 0 0 1-.5.5h-8a.5.5 0 0 1-.5-.5v-9a.5.5 0 0 1 .5-.5h8a.5.5 0 0 1 .5.5v2a.5.5 0 0 0 1 0v-2A1.5 1.5 0 0 0 9.5 2h-8A1.5 1.5 0 0 0 0 3.5v9A1.5 1.5 0 0 0 1.5 14h8a1.5 1.5 0 0 0 1.5-1.5v-2a.5.5 0 0 0-1 0z"/>
+                            <path fill-rule="evenodd" d="M15.854 8.354a.5.5 0 0 0 0-.708l-3-3a.5.5 0 0 0-.708.708L14.293 7.5H5.5a.5.5 0 0 0 0 1h8.793l-2.147 2.146a.5.5 0 0 0 .708.708z"/>
+                          </svg></a>
+                    </li>
+                    
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+
+
+
+    <!--*****************WRITE YOUR HTML CODE DOWN **************DONT CHANGE ANYTHING***************** */-->
+    <div class="out">  
+        <div class="container">  
+            <form class="form-for-food" id="choose-food-form">
+                <span> LUNCH</span>
+                <div class=" for" id="lunch-form"  name="lunch" > 
+                    
+                    <div class="radio-container" >
+                        <input type="radio" id="lunch-yes" name="lunch-choice" value="yes" checked>
+                        <label for="lunch-yes">Yes</label>
+                    </div>
+                    <div class="menu" id="lunch-menu">
+                        <label for="lunch-size">Choose a size:</label>
+                        <br>
+                        <select id="lunch-size" class="btn btn-outline-secondary" name="lunch-size">
+                            <option value="1.0">Large</option>
+                            <option value="0.75" selected>Regular</option>
+                            <option value="0.5">Small</option>
+                        </select>
+                    </div>
+                    <div class="radio-container">
+                        <input type="radio" id="lunch-no" name="lunch-choice" value="0" >
+                        <label for="lunch-no">No</label>
+                    </div>
+                    
+                </div>
+                <span>DINNER </span>
+                <div class="for" id="dinner-form" name="dinner"> 
+                    
+                    <div class="radio-container">
+                        <input type="radio" id="dinner-yes" name="dinner-choice" value="yes" checked>
+                        <label for="dinner-yes">Yes</label>
+                    </div>
+                    <div class="menu" id="dinner-menu">
+                        <label for="dinner-size">Choose a size:</label>
+                        <br>
+                        <select id="dinner-size" class="btn btn-outline-secondary" name="dinner-size">
+                            <option value="1.0">Large</option>
+                            <option value="0.75" selected>Regular</option>
+                            <option value="0.5">Small</option>
+                        </select>
+                    </div>
+                    <div class="radio-container">
+                        <input type="radio" id="dinner-no" name="dinner-choice" value="0" >
+                        <label for="dinner-no">No</label>
+                    </div>
+                    
+                </div>
+                
+                <button id="sub" type="submit" class="btn btn-outline-secondary"  style="color: #111010; background-color: rgb(177, 186, 186);">SUBMIT</button>
+                
+            </form>
+            <div class="board" style="display: none;"></div>
+            <div id="responce">
+                <img src="./icons8-tick.gif" style="padding-left: 10%;">
+                <br>
+                <p> Thanks for your Responce</p>
+                <p id="message"></p>
+            </div>
+            <div id="cooking-dis" style="display: none;">
+                <br>
+                <img src="./iPHoUj9Qnr.gif"   style="padding-right: auto; margin-left: 25%; padding-left: 10%; width: 110px; height: 110px;">
+                <br>
+                <h5><p> Food is being Prepared...... </p></h5>
+            </div>
+
+            <!-- // just for profile overlay -->
+            <div id="profileOverlay" class="overlay" style="display: none;">
+                <div class="overlay-content">
+                    
+                    <h2>Your Profile</h2>
+                    <hr> 
+                    <span class="closebtn" onclick="closeProfileOverlay()">&times;</span>
+                    <p id="profileName"></p>
+                    <p id="profileUserId"></p>
+                    <p id="profileRegNo"></p>
+                    <p id="profilePhone"></p>
+                    <p id="profileLunch"></p>
+                    <p id="profileDinner"></p>
+                </div>
+            </div>
+        </div>
+        
+    </div>
+
+
+
+
+
+
+
+
+
+
+    <script>
+        /*****************WRITE YOUR JS CODE DOWN ***************DONT CHANGE ANYTHING**************** */
+        const lunchYesRadio = document.getElementById('lunch-yes');
+        const lunchNoRadio = document.getElementById('lunch-no');
+        const lunchMenu = document.getElementById('lunch-menu');
+        const lunchSelectedSize = document.getElementById('lunch-size');
+        
+        const dinnerYesRadio = document.getElementById('dinner-yes');
+        const dinnerNoRadio = document.getElementById('dinner-no');
+        const dinnerMenu = document.getElementById('dinner-menu');
+        const dinnerSelectedSize = document.getElementById('dinner-size');
+        
+        const board = document.querySelector('.board');
+
+        const container = document.getElementById('container')
+        var mutex = 0;
+        // Attach event listeners to the radio buttons
+        lunchYesRadio.addEventListener("change", checkLunch);
+        lunchNoRadio.addEventListener("change", checkLunch);
+        dinnerYesRadio.addEventListener("change", checkDinner);
+        dinnerNoRadio.addEventListener("change", checkDinner);
+        
+        function checkLunch() {
+            if (lunchYesRadio.checked) {
+                lunchMenu.style.display = 'block';
+            } else {
+                lunchMenu.style.display = 'none';
+            }
+            // Update the board whenever the selection changes
+            //updateBoard();
+        }
+        
+        function checkDinner() {
+            if (dinnerYesRadio.checked) {
+                dinnerMenu.style.display = 'block';
+            } else {
+                dinnerMenu.style.display = 'none';
+            }
+            // Update the board whenever the selection changes
+            //updateBoard();
+        }
+
+        function updateBoard() {
+            let lunchSelectedValue = lunchYesRadio.checked ? lunchSelectedSize.value : lunchNoRadio.value;
+            let dinnerSelectedValue = dinnerYesRadio.checked ? dinnerSelectedSize.value : dinnerNoRadio.value;
+            board.textContent = "Lunch: " + lunchSelectedValue + ", Dinner: " + dinnerSelectedValue;
+        }
+
+        function display(event) {
+            event.preventDefault(); // Prevent form submission
+            updateBoard();
+            alert(board.textContent);
+            mutex=1;
+            checkmutex(event);
+        }
+        function checkmutex(event)
+        {
+            if(mutex==1)
+            {
+                const forms = document.getElementsByClassName('form-for-food');
+                for (let i = 0; i < forms.length; i++) {
+                    forms[i].style.display = 'none';
+                }
+                const res = document.getElementById('responce');
+                res.style.display = 'block';
+            }
+        }
+        function updateContentBasedOnTime() {
+            const now = new Date();
+            const hours = now.getHours();
+            // Check if the time is after 11 AM (11:00)
+            if (hours >= 23) { 
+                const forms = document.getElementsByClassName('form-for-food');
+                for (let i = 0; i < forms.length; i++) {
+                    forms[i].style.display = 'none';
+                }
+                const cook = document.getElementById('cooking-dis');
+                cook.style.display= 'block' ;
+                container.style.padding='none';
+                const bd = document.querySelector('body');
+                bd.style.backgroundImage = 'none';
+            }    
+        }
+        updateContentBasedOnTime();
+
+        document.addEventListener('DOMContentLoaded', function() {
+
+        document.getElementById('choose-food-form').addEventListener('submit', function(event) {
+            event.preventDefault(); // Prevent default form submission
+            display(event);
+            console.log("entered inside");
+            // Retrieve form values
+            const lunchChoice = document.querySelector('input[name="lunch-choice"]:checked').value;
+            const lunchSize = document.getElementById('lunch-size').value;
+            const dinnerChoice = document.querySelector('input[name="dinner-choice"]:checked').value;
+            const dinnerSize = document.getElementById('dinner-size').value;
+            //my code 
+            let lunchSelectedValue = lunchYesRadio.checked ? lunchSelectedSize.value : lunchNoRadio.value;
+            let dinnerSelectedValue = dinnerYesRadio.checked ? dinnerSelectedSize.value : dinnerNoRadio.value;
+            // Prepare data to send to the server
+            const formData = {
+                lunch: lunchSelectedValue,
+                dinner: dinnerSelectedValue
+            };
+            //alert(formData.lunch,formData.dinner );
+
+            // Send data to server
+            fetch('/choose-food', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(formData)
+            })
+            .then(response => {
+                
+                if (!response.ok) {
+                    throw new Error('Network response was not ok');
+                }
+                return response.json();
+            })
+            .then(data => {
+                if (data.redirect) {
+                        window.location.href = data.redirect;
+                    }
+                document.getElementById('message').textContent =  data.message;
+                    document.getElementById('message').style.color = 'green';
+                alert(data.message); 
+                
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                document.getElementById('message').textContent = 'Failed to update food preferences try after login again';
+                    document.getElementById('message').style.color = 'red';
+                alert('Failed to update food preferences try after login again');
+                window.location.href = './login.html';
+            });
+        });
+    });
+
+
+        // Function to show the profile overlay
+        function showProfileOverlay(event) {
+            event.preventDefault(); // Prevent the default link behavior
+            document.getElementById('profileOverlay').style.display = 'block';
+                
+
+            // Fetch profile data from the server
+            fetch('/profile', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                credentials: 'include' // Include cookies for session
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.error) {
+                    alert(data.error);
+                    window.location.href = './login.html';
+                } else {
+                    // Populate the overlay with profile data
+                    document.getElementById('profileName').textContent = `Name: ${data.name}`;
+                    document.getElementById('profileUserId').textContent = `User ID: ${data.user_id}`;
+                    document.getElementById('profileRegNo').textContent = `Reg No: ${data.reg_no}`;
+                    document.getElementById('profilePhone').textContent = `Phone: ${data.phone}`;
+                    document.getElementById('profileLunch').textContent = `Lunch: ${data.lunch}`;
+                    document.getElementById('profileDinner').textContent = `Dinner: ${data.dinner}`;
+                    
+                    // Show the profile overlay
+                }
+            })
+            .catch(error => {
+                console.error('Error fetching profile data:', error);
+            });
+        }
+
+        // Function to close the profile overlay
+        function closeProfileOverlay() {
+            document.getElementById('profileOverlay').style.display = 'none'; // Hide the profile overlay
+        }
+
+
+    </script>
+
+
+
+
+
+
+
+</body>
+</html>
