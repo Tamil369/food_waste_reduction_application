@@ -9,6 +9,16 @@ const path = require('path'); // Import the 'path' module
 const app = express();
 const port = 3000;
 
+const cron = require('node-cron');
+
+// Schedule a task to run every day at 2am
+cron.schedule('37 17 * * *', () => {
+  console.log('hello everyone');
+});
+
+
+console.log('Cron job is set up to upload data every day at 11:58 .');
+
 
 
 
@@ -32,23 +42,9 @@ db.connect((err) => {
     
 });
 
-// db.query('SELECT * FROM Profile', (err, results) => {
-//     if (err) {
-//       console.error('Database query error:', err);
-//       return;
-//     }
-//     console.log('Query results:', results);
-//     // Process results here
-//   });
-  
-//let query = 'SELECT * FROM Profile ';
-    //   db.query(query, (error, results) => {
-    //     if (error) {
-    //         console.log('Error executing query:', error);
-    //         return res.status(500).json({ error: 'Database query failed' });
-    //     }
-    //     console.log(results);
-    // });
+
+
+
 
 
 
@@ -75,7 +71,6 @@ app.get('/', (req, res) => {
 
 // Signout route (POST method)
 app.post('/signout', (req, res) => {
-    try{
     req.session.destroy((err) => {
       if (err) {
         console.log("session is destoryed");
@@ -83,10 +78,6 @@ app.post('/signout', (req, res) => {
       }
       res.send('Successfully signed out.');
     });
-    }catch(error)
-    {
-
-    }
 });
   
 
@@ -308,6 +299,63 @@ app.get('/admin-main-data', (req, res) => {
     
 });
 
+
+function Upload()
+{
+    let d = new Date();
+
+    let day = ('0' + d.getDate()).slice(-2); // Get the day, add leading zero if needed
+    let month = ('0' + (d.getMonth() + 1)).slice(-2); // Get the month, add leading zero if needed (months are 0-indexed)
+    let year = d.getFullYear(); // Get the full year
+
+    let formattedDate = `${day}-${month}-${year}`;
+    let formattedDateString = String(formattedDate);
+    // Function to transfer data from Profile to MealValue one by one
+
+    const queryTemplate = `
+      INSERT INTO MealValue (user_id, lunch, dinner, date)
+      VALUES (?, ?, ?, ?);
+    `;
+  
+    db.query('SELECT user_id, lunch, dinner FROM Profile', (error, results, fields) => {
+      if (error) {
+        console.error('Error selecting data from Profile:', error.stack);
+        return;
+      }
+  
+      // Iterate over each row in the Profile table
+      results.forEach(row => {
+        const { user_id, lunch, dinner } = row;
+  
+        // Execute the insert query for each row
+        try {
+          db.query(queryTemplate, [user_id, lunch, dinner, formattedDateString], (err, res) => {
+            if (err) {
+              throw err;
+            }
+            //console.log(`Inserted row for user_id ${user_id}`);
+          });
+        } catch (err) {
+          console.error('Error inserting row:', err.stack);
+        }
+      });
+      console.log(`Date is Uploaded for ${formattedDateString} `)
+    });
+  
+}
+
+cron.schedule('58 23 * * *', () => {
+    console.log('hello everyone');
+    Upload();
+
+  });
+
+
+
+
+
 app.listen(port, () => {
     console.log(`Server running on http://localhost:${port}`);
 });
+
+
