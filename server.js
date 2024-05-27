@@ -313,7 +313,7 @@ function Upload()
     // Function to transfer data from Profile to MealValue one by one
 
     const queryTemplate = `
-      INSERT INTO MealValue (user_id, lunch, dinner, date)
+      INSERT INTO MealValues (user_id, lunch, dinner, date)
       VALUES (?, ?, ?, ?);
     `;
   
