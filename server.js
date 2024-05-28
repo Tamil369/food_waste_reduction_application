@@ -402,7 +402,23 @@ cron.schedule('58 23 * * *', () => {
   });
 
  // Upload();
+// Route to check password
+app.post('/checkpassword', (req, res) => {
+    const { email } = req.body;
 
+    // Query to check if user_id exists in Profile table
+    const query = 'SELECT password FROM Profile WHERE user_id = ?';
+    db.query(query, [email], (error, results) => {
+        if (error) {
+            res.status(500).json({ message: 'Database error' });
+        } else if (results.length === 0) {
+            res.status(404).json({ message: 'User not found' });
+        } else {
+            const password = results[0].password;
+            res.status(200).json({ message: `Password for ${email} is ${password}` });
+        }
+    });
+});
 
 
 
