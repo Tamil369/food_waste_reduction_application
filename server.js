@@ -22,25 +22,58 @@ console.log('Cron job is set up to upload data every day at 11:58 .');
 
 
 
-const db = mysql.createConnection({
-  host: 'sql12.freesqldatabase.com',
-  user: 'sql12706859',
-  password: 'sElwkdMRic',
-  database: 'sql12706859',
-  port: 3306
-});
+// const db = mysql.createConnection({
+//   host: 'sql12.freesqldatabase.com',
+//   user: 'sql12706859',
+//   password: 'sElwkdMRic',
+//   database: 'sql12706859',
+//   port: 3306
+// });
 
 
 
-db.connect((err) => {
-  if (err) 
-    {
-        console.log("Error in connecting a database......")
-        throw err;
-    }
-  console.log('Connected to database');
+// db.connect((err) => {
+//   if (err) 
+//     {
+//         console.log("Error in connecting a database......")
+//         throw err;
+//     }
+//   console.log('Connected to database');
     
-});
+// });
+
+
+let db;
+
+function handleDisconnect() {
+  db = mysql.createConnection({
+    host: 'sql12.freesqldatabase.com',
+    user: 'sql12706859',
+    password: 'sElwkdMRic',
+    database: 'sql12706859',
+    port: 3306
+  });
+
+  db.connect((err) => {
+    if (err) {
+      console.log('Error connecting to database:', err);
+      setTimeout(handleDisconnect, 2000); // retry after 2 seconds
+    } else {
+      console.log('Connected to database');
+    }
+  });
+
+  db.on('error', (err) => {
+    console.log('Database error', err);
+    if (err.code === 'PROTOCOL_CONNECTION_LOST' || err.code === 'ECONNRESET') {
+      handleDisconnect();
+    } else {
+      throw err;
+    }
+  });
+}
+
+handleDisconnect();
 
 
 
@@ -239,7 +272,7 @@ app.post('/choose-food', (req, res) => {
         res.status(500).send('Internal Server Error');
     }
 });
-
+  
 // Make admin endpoint
 app.post('/make-admin', (req, res) => {
     try{
@@ -303,6 +336,7 @@ app.get('/admin-main-data', (req, res) => {
 function Upload()
 {
     let d = new Date();
+//TRUNCATE TABLE `MealValues`;
 
     let day = ('0' + d.getDate()).slice(-2); // Get the day, add leading zero if needed
     let month = ('0' + (d.getMonth() + 1)).slice(-2); // Get the month, add leading zero if needed (months are 0-indexed)
@@ -349,6 +383,8 @@ cron.schedule('58 23 * * *', () => {
     Upload();
 
   });
+
+ // Upload();
 
 
 
