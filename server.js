@@ -46,31 +46,48 @@ console.log('Cron job is set up to upload data every day at 11:58 .');
 let db;
 
 function handleDisconnect() {
-  db = mysql.createConnection({
+//   db = mysql.createConnection({
+//     host: 'sql12.freesqldatabase.com',
+//     user: 'sql12706859',
+//     password: 'sElwkdMRic',
+//     database: 'sql12706859',
+//     port: 3306
+//   });
+
+  db = mysql.createPool({
+    connectionLimit: 1000,
     host: 'sql12.freesqldatabase.com',
     user: 'sql12706859',
     password: 'sElwkdMRic',
     database: 'sql12706859',
     port: 3306
   });
-
-  db.connect((err) => {
+  db.getConnection((err, connection) => {
     if (err) {
-      console.log('Error connecting to database:', err);
-      setTimeout(handleDisconnect, 2000); // retry after 2 seconds
-    } else {
-      console.log('Connected to database');
+      console.error('Error connecting to database:', err);
+      return;
     }
+    console.log('Connected to database');
+    connection.release();
   });
 
-  db.on('error', (err) => {
-    console.log('Database error', err);
-    if (err.code === 'PROTOCOL_CONNECTION_LOST' || err.code === 'ECONNRESET') {
-      handleDisconnect();
-    } else {
-      throw err;
-    }
-  });
+//   db.connect((err) => {
+//     if (err) {
+//       console.log('Error connecting to database:', err);
+//       setTimeout(handleDisconnect, 2000); // retry after 2 seconds
+//     } else {
+//       console.log('Connected to database');
+//     }
+//   });
+
+//   db.on('error', (err) => {
+//     console.log('Database error', err);
+//     if (err.code === 'PROTOCOL_CONNECTION_LOST' || err.code === 'ECONNRESET') {
+//       handleDisconnect();
+//     } else {
+//       throw err;
+//     }
+//   });
 }
 
 handleDisconnect();
