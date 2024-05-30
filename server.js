@@ -350,58 +350,85 @@ app.get('/admin-main-data', (req, res) => {
 });
 
 
-function Upload()
-{
-    let d = new Date();
-//TRUNCATE TABLE `MealValues`;
 
-    let day = ('0' + d.getDate()).slice(-2); // Get the day, add leading zero if needed
-    let month = ('0' + (d.getMonth() + 1)).slice(-2); // Get the month, add leading zero if needed (months are 0-indexed)
-    let year = d.getFullYear(); // Get the full year
 
-    let formattedDate = `${day}-${month}-${year}`;
-    let formattedDateString = String(formattedDate);
-    // Function to transfer data from Profile to MealValue one by one
 
-    const queryTemplate = `
-      INSERT INTO MealValues (user_id, lunch, dinner, date)
-      VALUES (?, ?, ?, ?);
-    `;
-  
-    db.query('SELECT user_id, lunch, dinner FROM Profile', (error, results, fields) => {
-      if (error) {
-        console.error('Error selecting data from Profile:', error.stack);
-        return;
-      }
-  
-      // Iterate over each row in the Profile table
-      results.forEach(row => {
-        const { user_id, lunch, dinner } = row;
-  
-        // Execute the insert query for each row
-        try {
-          db.query(queryTemplate, [user_id, lunch, dinner, formattedDateString], (err, res) => {
-            if (err) {
-              throw err;
+function upload() {
+    return new Promise((resolve, reject) => {
+        let d = new Date();
+        let day = ('0' + d.getDate()).slice(-2); // Get the day, add leading zero if needed
+        let month = ('0' + (d.getMonth() + 1)).slice(-2); // Get the month, add leading zero if needed (months are 0-indexed)
+        let year = d.getFullYear(); // Get the full year
+
+        let formattedDateString = `${day}-${month}-${year}`;
+        let formattedDate = String(formattedDateString);
+
+        const queryTemplate = `
+            INSERT INTO MealValues (user_id, lunch, dinner, date)
+            VALUES (?, ?, ?, ?);
+        `;
+
+        db.query('SELECT user_id, lunch, dinner FROM Profile', (error, results) => {
+            if (error) {
+                console.error('Error selecting data from Profile:', error.stack);
+                return reject(error);
             }
-            //console.log(`Inserted row for user_id ${user_id}`);
-          });
-        } catch (err) {
-          console.error('Error inserting row:', err.stack);
-        }
-      });
-      console.log(`Date is Uploaded for ${formattedDateString} `)
+
+            if (results.length === 0) {
+                console.log('No data found in Profile table.');
+                return resolve();
+            }
+
+            let completed = 0;
+            results.forEach(row => {
+                const { user_id, lunch, dinner } = row;
+
+                db.query(queryTemplate, [user_id, lunch, dinner, formattedDate], (err, res) => {
+                    if (err) {
+                        console.error('Error inserting row:', err.stack);
+                        return reject(err);
+                    }
+
+                    completed++;
+                    if (completed === results.length) {
+                        console.log(`Data is Uploaded for ${formattedDate}`);
+                        resolve();
+                    }
+                });
+            });
+        });
     });
-  
 }
 
-cron.schedule('58 23 * * *', () => {
-    console.log('hello everyone');
-    Upload();
 
-  });
+// Endpoint to handle data upload
+app.post('/upload-data', (req, res) => {
+    const { date } = req.body;
+    console.log(`Received request to upload data for ${date}`);
 
- // Upload();
+    const query = 'DELETE FROM MealValues WHERE date = ?';
+
+    db.query(query, [date], (err, result) => {
+        if (err) {
+            console.error('Error truncating MealValues:', err);
+            return res.status(500).json({ message: 'Error truncating MealValues' });
+        }
+        console.log(`Truncated MealValues for date ${date}`);
+
+        upload()
+            .then(() => {
+                console.log('Data uploaded successfully.');
+                res.status(200).json({ message: `Data for ${date} uploaded successfully` });
+            })
+            .catch(error => {
+                console.error('Error uploading data:', error);
+                res.status(500).json({ message: 'Error uploading data' });
+            });
+    });
+});
+
+
+
 // Route to check password
 app.post('/checkpassword', (req, res) => {
     const { email } = req.body;
