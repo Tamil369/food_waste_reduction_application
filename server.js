@@ -172,7 +172,7 @@ app.post('/check-absent', (req, res) => {
 // Sign-up endpoint
 app.post('/signup', (req, res) => {
     try {
-        const { email, name, regNo, year, department, password, phone } = req.body;
+        const { email, name, regNo, year, department, password, phone , gen } = req.body;
         const checkQuery = 'SELECT * FROM Profile WHERE user_id = ?';
 
         db.query(checkQuery, [email], (err, results) => {
@@ -186,8 +186,8 @@ app.post('/signup', (req, res) => {
                 return res.status(200).json({ message: 'Email is already used', redirect: '/login.html' });
             }
 
-            const insertQuery = 'INSERT INTO Profile (user_id, name, reg_no, year, dept, password, phone, admin) VALUES (?, ?, ?, ?, ?, ?, ?, 0)';
-            db.query(insertQuery, [email, name, regNo, year, department, password, phone], (err, results) => {
+            const insertQuery = 'INSERT INTO Profile (user_id, name, reg_no, year, dept, password, phone, admin, gender) VALUES (?, ?, ?, ?, ?, ?, ?, 0, ?)';
+            db.query(insertQuery, [email, name, regNo, year, department, password, phone, gen], (err, results) => {
                 if (err) {
                     console.error('Database insert error:', err);
                     return res.status(500).send('Server error');
