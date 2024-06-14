@@ -265,30 +265,35 @@ app.post('/login', (req, res) => {
 
 // Choose food endpoint
 app.post('/choose-food', (req, res) => {
-    try{
-    if (!req.session.user.username) {
-        return res.status(404).json({redirect: '/login', message: 'Please log in first'}); 
-        // Redirect to login page if not logged in
-    }
-
-    const email = req.session.user.username;
-    console.log("email is retrived from session");
-    const { lunch, dinner } = req.body;
-
-    const updateQuery = 'UPDATE Profile SET lunch = ?, dinner = ? WHERE user_id = ?';
-    db.query(updateQuery, [lunch, dinner, email], (err, results) => {
+    try {
+      // Modified: Added session check
+      if (!req.session.user || !req.session.user.username) {
+        return res.status(404).json({ redirect: '/login', message: 'Please log in first' });
+      }
+  
+      // Modified: Email retrieval from session
+      const email = req.session.user.username;
+      console.log("Email is retrieved from session");
+      
+      const { lunch, dinner } = req.body;
+  
+      // Database update query
+      const updateQuery = 'UPDATE Profile SET lunch = ?, dinner = ? WHERE user_id = ?';
+      db.query(updateQuery, [lunch, dinner, email], (err, results) => {
         if (err) {
-            console.error('Error updating food preferences:', err);
-            return res.status(500).send('Server error');
+          console.error('Error updating food preferences:', err);
+          return res.status(500).send('Server error');
         }
-        console.log('user is upadated successfully to ',email);
+        console.log('User is updated successfully:', email);
         res.json({ message: 'Food preferences updated' });
-    });
-    }catch (error) {
-        console.error('Error in choose-food route:', error);
-        res.status(500).send('Internal Server Error');
+      });
+    } catch (error) {
+      // Modified: General error handling
+      console.error('Error in choose-food route:', error);
+      res.status(500).send('Internal Server Error');
     }
-});
+  });
+  
   
 // Make admin endpoint
 app.post('/make-admin', (req, res) => {
