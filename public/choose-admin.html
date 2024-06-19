@@ -186,6 +186,29 @@
     <div class="out">  
         <div class="container">  
             <form class="form-for-food" id="choose-food-form">
+                <span> BREAK FAST</span>
+                <div class=" for" id="bf-form"  name="bf" > 
+                    
+                    <div class="radio-container" >
+                        <input type="radio" id="bf-yes" name="bf-choice" value="yes" checked>
+                        <label for="bf-yes">Yes</label>
+                    </div>
+                    <div class="menu" id="bf-menu">
+                        <label for="bf-size">Choose a size:</label>
+                        <br>
+                        <select id="bf-size" class="btn btn-outline-secondary" name="bf-size">
+                            <option value="1.0">Large</option>
+                            <option value="0.75" selected>Regular</option>
+                            <option value="0.5">Small</option>
+                        </select>
+                    </div>
+                    <div class="radio-container">
+                        <input type="radio" id="bf-no" name="bf-choice" value="0" >
+                        <label for="bf-no">No</label>
+                    </div>
+                    <input type="text" id="bf-reason" name="bfreason" class="hidden" style="width: 100%; display: none;" placeholder="Enter Reason....."  > 
+                    
+                </div>
                 <span> LUNCH</span>
                 <div class=" for" id="lunch-form"  name="lunch" > 
                     
@@ -206,6 +229,7 @@
                         <input type="radio" id="lunch-no" name="lunch-choice" value="0" >
                         <label for="lunch-no">No</label>
                     </div>
+                    <input type="text" id="lunch-reason" class="hidden" name="lunchreason" style="width: 100%; display: none;" placeholder="Enter Reason....."    > 
                     
                 </div>
                 <span>DINNER </span>
@@ -228,10 +252,12 @@
                         <input type="radio" id="dinner-no" name="dinner-choice" value="0" >
                         <label for="dinner-no">No</label>
                     </div>
+                    <input type="text" id="dinner-reason" class="hidden" name="dinnerreason" style="width: 100%; display: none;" placeholder="Enter Reason....."  > 
+                    
                     
                 </div>
                 
-                <button id="sub" type="submit" class="btn btn-outline-secondary"  style="color: #111010; background-color: rgb(177, 186, 186);">SUBMIT</button>
+                <button id="sub" type="submit" class="btn btn-outline-secondary"  style="color: #111010; background-color: rgb(205, 223, 223);">SUBMIT</button>
                 
             </form>
             <div class="board" style="display: none;"></div>
@@ -247,9 +273,17 @@
                 <br>
                 <h5><p> Food is being Prepared...... </p></h5>
             </div>
+
+
         </div>
         
     </div>
+
+
+    <div id="bmessage" style="display: none;">I ordered my BreakFast</div>
+    <div id="lmessage" style="display: none;">I ordered my Lunch</div>
+    <div id="dmessage" style="display: none;">I ordered my Dinner</div>
+
 
 
 
@@ -262,31 +296,61 @@
 
     <script>
         /*****************WRITE YOUR JS CODE DOWN ***************DONT CHANGE ANYTHING**************** */
+        const bm = document.getElementById('bmessage');
+        const lm = document.getElementById('lmessage');
+        const dm = document.getElementById('dmessage');
         const lunchYesRadio = document.getElementById('lunch-yes');
         const lunchNoRadio = document.getElementById('lunch-no');
         const lunchMenu = document.getElementById('lunch-menu');
         const lunchSelectedSize = document.getElementById('lunch-size');
+
+         
+        const bfYesRadio = document.getElementById('bf-yes');
+        const bfNoRadio = document.getElementById('bf-no');
+        const bfMenu = document.getElementById('bf-menu');
+        const bfSelectedSize = document.getElementById('bf-size');
         
         const dinnerYesRadio = document.getElementById('dinner-yes');
         const dinnerNoRadio = document.getElementById('dinner-no');
         const dinnerMenu = document.getElementById('dinner-menu');
         const dinnerSelectedSize = document.getElementById('dinner-size');
         
+        const br = document.getElementById('bf-reason');
+        const lr = document.getElementById('lunch-reason');
+        const dr = document.getElementById('dinner-reason');
+
         const board = document.querySelector('.board');
 
         const container = document.getElementById('container')
         var mutex = 0;
         // Attach event listeners to the radio buttons
+        bfYesRadio.addEventListener("change", checkbf);
+        bfNoRadio.addEventListener("change", checkbf);
         lunchYesRadio.addEventListener("change", checkLunch);
         lunchNoRadio.addEventListener("change", checkLunch);
         dinnerYesRadio.addEventListener("change", checkDinner);
         dinnerNoRadio.addEventListener("change", checkDinner);
         
+
+        function checkbf() {
+            if (bfYesRadio.checked) {
+                bfMenu.style.display = 'block';  
+                br.style.display='none';
+            } else {
+                bfMenu.style.display = 'none'; 
+                br.style.display='block';
+            }
+            // Update the board whenever the selection changes
+            //updateBoard();
+        }
+
         function checkLunch() {
             if (lunchYesRadio.checked) {
-                lunchMenu.style.display = 'block';
+                lunchMenu.style.display = 'block'; 
+                lr.style.display='none';
             } else {
                 lunchMenu.style.display = 'none';
+                lr.style.display='block';
             }
             // Update the board whenever the selection changes
             //updateBoard();
@@ -294,18 +358,22 @@
         
         function checkDinner() {
             if (dinnerYesRadio.checked) {
-                dinnerMenu.style.display = 'block';
+                dinnerMenu.style.display = 'block'; 
+                dr.style.display='none';
             } else {
                 dinnerMenu.style.display = 'none';
+                dr.style.display='block';
+                
             }
             // Update the board whenever the selection changes
             //updateBoard();
         }
 
         function updateBoard() {
+            let bfSelectedValue = bfYesRadio.checked ? bfSelectedSize.value : bfNoRadio.value;
             let lunchSelectedValue = lunchYesRadio.checked ? lunchSelectedSize.value : lunchNoRadio.value;
             let dinnerSelectedValue = dinnerYesRadio.checked ? dinnerSelectedSize.value : dinnerNoRadio.value;
-            board.textContent = "Lunch: " + lunchSelectedValue + ", Dinner: " + dinnerSelectedValue;
+            board.textContent = "BreakFast: " + bfSelectedValue + ", Lunch: " + lunchSelectedValue + ", Dinner: " + dinnerSelectedValue;
         }
 
         function display(event) {
@@ -331,7 +399,8 @@
             const now = new Date();
             const hours = now.getHours();
             // Check if the time is after 11 AM (11:00)
-            if (hours >= 23) { 
+            // if (hours >= 23) { 
+            if (hours <= 22) { 
                 const forms = document.getElementsByClassName('form-for-food');
                 for (let i = 0; i < forms.length; i++) {
                     forms[i].style.display = 'none';
@@ -343,24 +412,62 @@
                 bd.style.backgroundImage = 'none';
             }    
         }
-        //updateContentBasedOnTime();
+        updateContentBasedOnTime();
 
         document.addEventListener('DOMContentLoaded', function() {
 
         document.getElementById('choose-food-form').addEventListener('submit', function(event) {
+            console.log("inside a submit ");
             event.preventDefault(); // Prevent default form submission
+           
+            // conditon for not empty 
+
+            if(bfNoRadio.checked && br.value=='')
+            {
+                alert("Enter a valid Reason");
+                return;
+            }
+            else if(bfNoRadio.checked)
+            {
+                bm.textContent=br.value;
+            }
+            if(lunchNoRadio.checked && lr.value=='')
+            {
+                alert("Enter a valid Reason");
+                return;
+            }
+            else if(lunchNoRadio.checked)
+            {
+                lm.textContent=lr.value;
+            }
+            if(dinnerNoRadio.checked && dr.value=='')
+            {
+                alert("Enter a valid Reason");
+                return;
+            }
+            else if(dinnerNoRadio.checked)
+            {
+                dm.textContent=dr.value;
+            }
+
+            var str = bm.textContent + lm.textContent + dm.textContent;
             display(event);
-            console.log("entered inside");
+
+
             // Retrieve form values
+            const bfChoice = document.querySelector('input[name="bf-choice"]:checked').value;
+            const bfSize = document.getElementById('bf-size').value;
             const lunchChoice = document.querySelector('input[name="lunch-choice"]:checked').value;
             const lunchSize = document.getElementById('lunch-size').value;
             const dinnerChoice = document.querySelector('input[name="dinner-choice"]:checked').value;
             const dinnerSize = document.getElementById('dinner-size').value;
             //my code 
+            let bfSelectedValue = bfYesRadio.checked ? bfSelectedSize.value : bfNoRadio.value;
             let lunchSelectedValue = lunchYesRadio.checked ? lunchSelectedSize.value : lunchNoRadio.value;
             let dinnerSelectedValue = dinnerYesRadio.checked ? dinnerSelectedSize.value : dinnerNoRadio.value;
             // Prepare data to send to the server
             const formData = {
+                bf : bfSelectedValue,
                 lunch: lunchSelectedValue,
                 dinner: dinnerSelectedValue
             };
@@ -397,6 +504,7 @@
                 alert('Failed to update food preferences try after login again');
                 window.location.href = './login.html';
             });
+            alert(str);
         });
     });
 

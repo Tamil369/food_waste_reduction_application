@@ -87,14 +87,22 @@
         .para {
             padding: 10px;
         }
+        .num
+        {
+            width: 100%  ;
+            padding-left:20% ;
+            padding-right: 10%;
 
-        .num {
+
+        }
+
+        .num > * {
             color: darkslategray;
-            display: inline;
-            /* margin-right: 100px; */ /* Remove this line */
+            display: flex;
+            
             margin: 10px;
-            padding-left: 100px;
-            display: block;
+            justify-content:flex-end;
+            align-items: center;
             font-variant-numeric: tabular-nums;
             margin-bottom: 15px;
         }
@@ -199,6 +207,7 @@
             opacity: 70%;
             color: #3e3e3e;
         }
+        
 
 
 
@@ -281,6 +290,7 @@
                     </p>
                     <hr>
                     <h5 class="num">  
+                        <p>Total BreakFast: <span id="totalbf">0</span></p>
                         <p>Total Lunch: <span id="totalLunch">0</span></p>
                         <p>Total Dinner: <span id="totalDinner">0</span></p>
                         <p>Total Users: <span id="totalRows">0</span></p>
@@ -300,9 +310,11 @@
             <hr>
             <div  id="checking">
                 <h3>Check Absent</h3>
-                <input type="checkbox" id="forlunch">
+                <input type="checkbox" name="check-absent" id="forbf">
+                <label for="forbf">BREAKFAST </label>
+                <input type="checkbox" name="check-absent" id="forlunch">
                 <label for="forlunch">LUNCH</label>
-                <input type="checkbox" id="fordinner">
+                <input type="checkbox" name="check-absent" id="fordinner">
                 <label for="fordinner">DINNER</label>
                 <br>
                 <button type="button" id="buttonchecking" class="btn btn-outline-info" style="margin:2% auto 10px 40%;" onclick="checking(event)">Check</button>
@@ -330,6 +342,7 @@
             <p id="profileUserId"></p>
             <p id="profileRegNo"></p>
             <p id="profilePhone"></p>
+            <p id="profilebf"></p>
             <p id="profileLunch"></p>
             <p id="profileDinner"></p>
         </div>
@@ -365,7 +378,7 @@
             const after = document.getElementById('after-11');
             const student = document.getElementById('student-detail');
                 
-            if (hours > 10 & hours < 18) // 10 and 18
+            if (hours > 10 & hours < 24) // 10 and 18
             { 
                 after.style.display='none';
                 student.style.display='block';
@@ -377,15 +390,35 @@
             }
         }
         updateContentBasedOnTime();
+        function convertMillisecondsToDate() 
+        {
+            const currentDate = new Date();
+            const milliseconds = currentDate.getTime();
+            const date = new Date(milliseconds);
+            const year = date.getFullYear();
+            const month = String(date.getMonth() + 1).padStart(2, '0'); // Ensure two digits
+            const day = String(date.getDate()).padStart(2, '0'); // Ensure two digits
+            return `${day}-${month}-${year}`;
+        }
 
-        function checking(event) {
+        function checking(event) 
+        {
+            const forbfChecked = document.getElementById('forbf').checked;
             const forLunchChecked = document.getElementById('forlunch').checked;
             const forDinnerChecked = document.getElementById('fordinner').checked;
 
             let mealType;
 
-            if (forLunchChecked && forDinnerChecked) {
-                mealType = 'both';
+            if (forbfChecked && forLunchChecked && forDinnerChecked) {
+                mealType = 'all';
+            } else if (forbfChecked && forLunchChecked) {
+                mealType = 'breakfast_and_lunch';
+            } else if (forbfChecked && forDinnerChecked) {
+                mealType = 'breakfast_and_dinner';
+            } else if (forLunchChecked && forDinnerChecked) {
+                mealType = 'lunch_and_dinner';
+            } else if (forbfChecked) {
+                mealType = 'breakfast';
             } else if (forLunchChecked) {
                 mealType = 'lunch';
             } else if (forDinnerChecked) {
@@ -395,14 +428,26 @@
             }
 
             switch (mealType) {
+                case 'breakfast':
+                    fetchAbsentData('breakfast');
+                    break;
                 case 'lunch':
                     fetchAbsentData('lunch');
                     break;
                 case 'dinner':
                     fetchAbsentData('dinner');
                     break;
-                case 'both':
-                    fetchAbsentData('both');
+                case 'breakfast_and_lunch':
+                    fetchAbsentData('breakfast_and_lunch');
+                    break;
+                case 'breakfast_and_dinner':
+                    fetchAbsentData('breakfast_and_dinner');
+                    break;
+                case 'lunch_and_dinner':
+                    fetchAbsentData('lunch_and_dinner');
+                    break;
+                case 'all':
+                    fetchAbsentData('all');
                     break;
                 default:
                     document.getElementById('todisplay').textContent = 'No options selected';
@@ -422,7 +467,7 @@
             .then(data => {
                 let displayText = '<ol> <hr>';
                 data.forEach(item => {
-                    displayText += `<li>Name: ${item.name}, Phone: ${item.phone},  Year: ${item.year},  Dept: ${item.dept} </li> <hr>`;
+                    displayText += `<li>Name: ${item.name}, Phone: ${item.phone},  Year: ${item.year},  Dept: ${item.dept} , Date:${convertMillisecondsToDate()} </li> <hr>`;
 
                 });
                 displayText += '</ol>';
@@ -439,6 +484,7 @@
             fetch('/admin-main-data')
                 .then(response => response.json())
                 .then(data => {
+                    document.getElementById('totalbf').textContent = data.totalbf;
                     document.getElementById('totalLunch').textContent = data.totalLunch;
                     document.getElementById('totalDinner').textContent = data.totalDinner;
                     document.getElementById('totalRows').textContent = data.totalRows;
@@ -477,7 +523,7 @@
                     document.getElementById('profilePhone').textContent = `Phone: ${data.phone}`;
                     document.getElementById('profileLunch').textContent = `Lunch: ${data.lunch}`;
                     document.getElementById('profileDinner').textContent = `Dinner: ${data.dinner}`;
-                    
+                    document.getElementById('profilebf').textContent = `Break Fast: ${data.bf}`;
                     // Show the profile overlay
                 }
             })
