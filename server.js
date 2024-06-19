@@ -136,33 +136,46 @@ app.post('/check-absent', (req, res) => {
         return res.status(404).json({redirect: '/login', message: 'Please log in first'}); 
         // Redirect to login page if not logged in
     }
-    try{
-    const meal = req.body.meal;
-    let query;
-
-    switch (meal) {
-        case 'lunch':
-            query = 'SELECT name, phone, year, dept FROM Profile WHERE lunch = 0';
-            break;
-        case 'dinner':
-            query = 'SELECT name, phone, year, dept FROM Profile WHERE dinner = 0';
-            break;
-        case 'both':
-            query = 'SELECT name, phone, year, dept FROM Profile WHERE lunch = 0 AND dinner = 0';
-            break;
-        default:
-            return res.status(400).json({ error: 'Invalid meal type' });
-    }
-
-    // Assuming you have a database connection object named db
-    db.query(query, (error, results) => {
-        if (error) {
-            console.error('Error executing query:', error);
-            return res.status(500).json({ error: 'Database query failed' });
+    try
+    {
+        const meal = req.body.meal;
+        let query;
+    
+        switch (meal) {
+            case 'breakfast':
+                query = 'SELECT name, phone, year, dept FROM Profile WHERE bf = 0';
+                break;
+            case 'lunch':
+                query = 'SELECT name, phone, year, dept FROM Profile WHERE lunch = 0';
+                break;
+            case 'dinner':
+                query = 'SELECT name, phone, year, dept FROM Profile WHERE dinner = 0';
+                break;
+            case 'breakfast_and_lunch':
+                query = 'SELECT name, phone, year, dept FROM Profile WHERE bf = 0 AND lunch = 0';
+                break;
+            case 'breakfast_and_dinner':
+                query = 'SELECT name, phone, year, dept FROM Profile WHERE bf = 0 AND dinner = 0';
+                break;
+            case 'lunch_and_dinner':
+                query = 'SELECT name, phone, year, dept FROM Profile WHERE lunch = 0 AND dinner = 0';
+                break;
+            case 'all':
+                query = 'SELECT name, phone, year, dept FROM Profile WHERE bf = 0 AND lunch = 0 AND dinner = 0';
+                break;
+            default:
+                return res.status(400).json({ error: 'Invalid meal type' });
         }
-        res.json(results);
-    });
-    }catch(error)
+    
+        db.query(query, (error, results) => {
+            if (error) {
+                console.error('Error executing query:', error);
+                return res.status(500).json({ error: 'Database query failed' });
+            }
+            res.json(results);
+        });
+    }
+    catch(error)
     {
 
     }
@@ -275,11 +288,11 @@ app.post('/choose-food', (req, res) => {
       const email = req.session.user.username;
       console.log("Email is retrieved from session");
       
-      const { lunch, dinner } = req.body;
+      const { bf, lunch, dinner } = req.body;
   
       // Database update query
-      const updateQuery = 'UPDATE Profile SET lunch = ?, dinner = ? WHERE user_id = ?';
-      db.query(updateQuery, [lunch, dinner, email], (err, results) => {
+      const updateQuery = 'UPDATE Profile SET bf = ?, lunch = ?, dinner = ? WHERE user_id = ?';
+      db.query(updateQuery, [bf, lunch, dinner, email], (err, results) => {
         if (err) {
           console.error('Error updating food preferences:', err);
           return res.status(500).send('Server error');
@@ -338,7 +351,7 @@ app.get('/admin-main-data', (req, res) => {
         return res.status(404).json({redirect: '/login', message: 'Please log in first'}); 
         // Redirect to login page if not logged in
     }
-    const query = 'SELECT SUM(lunch) as totalLunch, SUM(dinner) as totalDinner, COUNT(*) as totalRows FROM Profile';
+    const query = 'SELECT SUM(bf) as totalbf, SUM(lunch) as totalLunch, SUM(dinner) as totalDinner, COUNT(*) as totalRows FROM Profile';
 
     db.query(query, (err, results) => {
         if (err) {
