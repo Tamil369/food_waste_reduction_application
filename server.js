@@ -288,11 +288,11 @@ app.post('/choose-food', (req, res) => {
       const email = req.session.user.username;
       console.log("Email is retrieved from session");
       
-      const { bf, lunch, dinner } = req.body;
+      const { bf, lunch, dinner, bfreason, lreason, dreason } = req.body;
   
       // Database update query
-      const updateQuery = 'UPDATE Profile SET bf = ?, lunch = ?, dinner = ? WHERE user_id = ?';
-      db.query(updateQuery, [bf, lunch, dinner, email], (err, results) => {
+      const updateQuery = `UPDATE Profile SET bf = ?, lunch = ?, dinner = ?, bfreason = ?, lreason = ?, dreason = ? WHERE user_id = ?`;
+      db.query(updateQuery, [bf, lunch, dinner, bfreason, lreason, dreason, email], (err, results) => {
         if (err) {
           console.error('Error updating food preferences:', err);
           return res.status(500).send('Server error');
@@ -305,7 +305,8 @@ app.post('/choose-food', (req, res) => {
       console.error('Error in choose-food route:', error);
       res.status(500).send('Internal Server Error');
     }
-  });
+});
+
   
   
 // Make admin endpoint
@@ -366,6 +367,33 @@ app.get('/admin-main-data', (req, res) => {
         }
     
 });
+
+// for initial update
+app.get('/setvalue', (req, res) => {
+    try{
+        if (!req.session.user.username) {
+        return res.status(404).json({redirect: '/login', message: 'Please log in first'}); 
+        // Redirect to login page if not logged in
+    }
+    let email = req.session.user.username;
+    const query = 'SELECT * FROM Profile WHERE user_id = ?';
+
+    db.query(query, [email], (err, results) => {
+        if (err) {
+            return res.status(500).send('Server error');
+        }
+
+        res.json(results[0]);
+    });
+    }catch (error) {
+            console.error('Error in choose-food route:', error);
+            res.status(500).send('Internal Server Error');
+        }
+    
+});
+
+
+
 
 
 
