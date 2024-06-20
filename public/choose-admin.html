@@ -129,6 +129,43 @@
             opacity: 0;
         }
 
+         /* Style for the profile overlay */
+         .overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0,0,0,0.7);
+            z-index: 1000;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .overlay-content {
+            background-color: white;
+            padding: 20px;
+            border-radius: 8px;
+            width: 80%;
+            max-width: 500px;
+            text-align: center;
+            position: relative;
+            top: 70px;
+            left: 10%;
+            right: 10%;
+        }
+
+        .closebtn {
+            position: absolute;
+            top: 10px;
+            right: 25px;
+            font-size: 30px;
+            cursor: pointer;
+            color: rgb(177, 126, 126);
+        }
+         
+
 
 
     </style>
@@ -154,27 +191,31 @@
             </button>
     
             <div class="navbar-collapse collapse" id="navbarsExample01">
-                <ul class="navbar-nav me-auto mb-2">
-                    <li class="nav-item">
-                        <a class="nav-link active" aria-current="page" href="./admine-home.html">Home</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="./admine-main.html">Main page</a> 
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link active" aria-current="page" href="./make-admine.html">Make Admine</a>
-                    </li>
-                    
-                    
-                    
-                    <li class="nav-item">
-                        <a class="nav-link active" aria-current="page"  id="signout-button" href="#" onclick="fetch('/signout', {method: 'POST'}).then(response => { if (response.ok) window.location.href = '/login.html'; else alert('Failed to sign out.'); }).catch(error => { console.error('Error during signout:', error); alert('Failed to sign out.'); });">Sign Out<svg style="margin-left: 10px;" xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor"  class="bi bi-box-arrow-right" viewBox="0 0 16 16">
-                            <path fill-rule="evenodd" d="M10 12.5a.5.5 0 0 1-.5.5h-8a.5.5 0 0 1-.5-.5v-9a.5.5 0 0 1 .5-.5h8a.5.5 0 0 1 .5.5v2a.5.5 0 0 0 1 0v-2A1.5 1.5 0 0 0 9.5 2h-8A1.5 1.5 0 0 0 0 3.5v9A1.5 1.5 0 0 0 1.5 14h8a1.5 1.5 0 0 0 1.5-1.5v-2a.5.5 0 0 0-1 0z"/>
-                            <path fill-rule="evenodd" d="M15.854 8.354a.5.5 0 0 0 0-.708l-3-3a.5.5 0 0 0-.708.708L14.293 7.5H5.5a.5.5 0 0 0 0 1h8.793l-2.147 2.146a.5.5 0 0 0 .708.708z"/>
-                          </svg></a>
-                    </li>
-                    
-                </ul>
+
+                
+                    <ul class="navbar-nav me-auto mb-2">
+                        <li class="nav-item">
+                            <a class="nav-link active" aria-current="page" href="./admine-home.html">Home</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="./admine-main.html">Main page</a> 
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link active" aria-current="page" href="./make-admine.html">Make Admine</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="#" onclick="showProfileOverlay(event)">Profile</a>
+                        </li>
+                        
+                        
+                        <li class="nav-item">
+                            <a class="nav-link active" aria-current="page"  id="signout-button" href="#" onclick="fetch('/signout', {method: 'POST'}).then(response => { if (response.ok) window.location.href = '/login.html'; else alert('Failed to sign out.'); }).catch(error => { console.error('Error during signout:', error); alert('Failed to sign out.'); });">Sign Out<svg style="margin-left: 10px;" xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor"  class="bi bi-box-arrow-right" viewBox="0 0 16 16">
+                                <path fill-rule="evenodd" d="M10 12.5a.5.5 0 0 1-.5.5h-8a.5.5 0 0 1-.5-.5v-9a.5.5 0 0 1 .5-.5h8a.5.5 0 0 1 .5.5v2a.5.5 0 0 0 1 0v-2A1.5 1.5 0 0 0 9.5 2h-8A1.5 1.5 0 0 0 0 3.5v9A1.5 1.5 0 0 0 1.5 14h8a1.5 1.5 0 0 0 1.5-1.5v-2a.5.5 0 0 0-1 0z"/>
+                                <path fill-rule="evenodd" d="M15.854 8.354a.5.5 0 0 0 0-.708l-3-3a.5.5 0 0 0-.708.708L14.293 7.5H5.5a.5.5 0 0 0 0 1h8.793l-2.147 2.146a.5.5 0 0 0 .708.708z"/>
+                              </svg></a>
+                        </li>
+                        
+                    </ul>
             </div>
         </div>
     </nav>
@@ -206,7 +247,7 @@
                         <input type="radio" id="bf-no" name="bf-choice" value="0" >
                         <label for="bf-no">No</label>
                     </div>
-                    <input type="text" id="bf-reason" name="bfreason" class="hidden" style="width: 100%; display: none;" placeholder="Enter Reason....."  > 
+                    <input type="text" id="bf-reason" name="bfreason" class="hidden" style="width: 100%; display: none;" placeholder="Enter Reason....." maxlength="150" > 
                     
                 </div>
                 <span> LUNCH</span>
@@ -229,7 +270,7 @@
                         <input type="radio" id="lunch-no" name="lunch-choice" value="0" >
                         <label for="lunch-no">No</label>
                     </div>
-                    <input type="text" id="lunch-reason" class="hidden" name="lunchreason" style="width: 100%; display: none;" placeholder="Enter Reason....."    > 
+                    <input type="text" id="lunch-reason" class="hidden" name="lunchreason" style="width: 100%; display: none;" placeholder="Enter Reason....."  maxlength="150"  > 
                     
                 </div>
                 <span>DINNER </span>
@@ -252,7 +293,7 @@
                         <input type="radio" id="dinner-no" name="dinner-choice" value="0" >
                         <label for="dinner-no">No</label>
                     </div>
-                    <input type="text" id="dinner-reason" class="hidden" name="dinnerreason" style="width: 100%; display: none;" placeholder="Enter Reason....."  > 
+                    <input type="text" id="dinner-reason" class="hidden" name="dinnerreason" style="width: 100%; display: none;" placeholder="Enter Reason....." maxlength="150" > 
                     
                     
                 </div>
@@ -274,18 +315,29 @@
                 <h5><p> Food is being Prepared...... </p></h5>
             </div>
 
-
+            <!-- // just for profile overlay -->
+            <div id="profileOverlay" class="overlay" style="display: none;">
+                <div class="overlay-content">
+                    
+                    <h2>Your Profile</h2>
+                    <hr> 
+                    <span class="closebtn" onclick="closeProfileOverlay()">&times;</span>
+                    <p id="profileName"></p>
+                    <p id="profileUserId"></p>
+                    <p id="profileRegNo"></p>
+                    <p id="profilePhone"></p>
+                    <p id="profilebf"></p>
+                    <p id="profileLunch"></p>
+                    <p id="profileDinner"></p>
+                </div>
+            </div>
         </div>
         
     </div>
 
-
     <div id="bmessage" style="display: none;">I ordered my BreakFast</div>
     <div id="lmessage" style="display: none;">I ordered my Lunch</div>
     <div id="dmessage" style="display: none;">I ordered my Dinner</div>
-
-
-
 
 
 
@@ -368,6 +420,7 @@
             // Update the board whenever the selection changes
             //updateBoard();
         }
+        
 
         function updateBoard() {
             let bfSelectedValue = bfYesRadio.checked ? bfSelectedSize.value : bfNoRadio.value;
@@ -399,8 +452,7 @@
             const now = new Date();
             const hours = now.getHours();
             // Check if the time is after 11 AM (11:00)
-            // if (hours >= 23) { 
-            if (hours <= 22) { 
+            if (hours >= 23) { 
                 const forms = document.getElementsByClassName('form-for-food');
                 for (let i = 0; i < forms.length; i++) {
                     forms[i].style.display = 'none';
@@ -414,10 +466,94 @@
         }
         updateContentBasedOnTime();
 
+
+        function functiontoSetSelectedValues() 
+        {
+            let foodPreferences = {
+                bf: 0.00,
+                bfReason: '',
+                lunch: 0.00,
+                lunchReason: '',
+                dinner: 0.00,
+                dinnerReason: ''
+            };
+
+            fetch('/setvalue')
+                .then(response => response.json())
+                .then(data => {
+                    foodPreferences.bf = parseFloat(data.bf);
+                    foodPreferences.bfReason = data.bfreason;
+                    foodPreferences.lunch = parseFloat(data.lunch);
+                    foodPreferences.lunchReason = data.lreason;
+                    foodPreferences.dinner = parseFloat(data.dinner);
+                    foodPreferences.dinnerReason = data.dreason;
+
+                    // Set values in reason input
+                    
+                    
+                    
+
+                    // Set radio buttons and select options
+                    if (foodPreferences.bf === 0) {
+                        bfNoRadio.checked = true;
+                        br.value = foodPreferences.bfReason;
+                    } else {
+                        bfYesRadio.checked = true;
+                        for (let i = 0; i < bfSelectedSize.options.length; i++) {
+                            if (parseFloat(bfSelectedSize.options[i].value) === foodPreferences.bf) {
+                                bfSelectedSize.options[i].selected = true;
+                                break;
+                            }
+                        }
+                    }
+
+                    if (foodPreferences.lunch === 0) {
+                        lunchNoRadio.checked = true;
+                        lr.value = foodPreferences.lunchReason;
+                    } else {
+                        lunchYesRadio.checked = true;
+                        for (let i = 0; i < lunchSelectedSize.options.length; i++) {
+                            if (parseFloat(lunchSelectedSize.options[i].value) === foodPreferences.lunch) {
+                                lunchSelectedSize.options[i].selected = true;
+                                break;
+                            }
+                        }
+                    }
+
+                    if (foodPreferences.dinner === 0) {
+                        dinnerNoRadio.checked = true;
+                        dr.value = foodPreferences.dinnerReason;
+                    } else {
+                        dinnerYesRadio.checked = true;
+                        for (let i = 0; i < dinnerSelectedSize.options.length; i++) {
+                            if (parseFloat(dinnerSelectedSize.options[i].value) === foodPreferences.dinner) {
+                                dinnerSelectedSize.options[i].selected = true;
+                                break;
+                            }
+                        }
+                    }
+
+                    // Call check functions to update UI
+                    checkbf();
+                    checkLunch();
+                    checkDinner();
+                })
+                .catch(error => {
+                    console.error('Error fetching admin data:', error);
+                    alert('Error fetching admin data. Please try again after login');
+                    window.location.href = './login.html';
+                });
+        }
+
+
+
+
         document.addEventListener('DOMContentLoaded', function() {
+        
+        functiontoSetSelectedValues();
 
         document.getElementById('choose-food-form').addEventListener('submit', function(event) {
-            console.log("inside a submit ");
+            // console.log("inside a submit ");
             event.preventDefault(); // Prevent default form submission
            
             // conditon for not empty 
@@ -469,7 +605,10 @@
             const formData = {
                 bf : bfSelectedValue,
                 lunch: lunchSelectedValue,
-                dinner: dinnerSelectedValue
+                dinner: dinnerSelectedValue,
+                bfreason:bm.textContent,
+                lreason: lm.textContent,
+                dreason: dm.textContent
             };
             //alert(formData.lunch,formData.dinner );
 
@@ -507,6 +646,49 @@
             alert(str);
         });
     });
+
+
+        // Function to show the profile overlay
+        function showProfileOverlay(event) {
+            event.preventDefault(); // Prevent the default link behavior
+            document.getElementById('profileOverlay').style.display = 'block';
+                
+
+            // Fetch profile data from the server
+            fetch('/profile', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                credentials: 'include' // Include cookies for session
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.error) {
+                    alert(data.error);
+                    window.location.href = './login.html';
+                } else {
+                    // Populate the overlay with profile data
+                    document.getElementById('profileName').textContent = `Name: ${data.name}`;
+                    document.getElementById('profileUserId').textContent = `User ID: ${data.user_id}`;
+                    document.getElementById('profileRegNo').textContent = `Reg No: ${data.reg_no}`;
+                    document.getElementById('profilePhone').textContent = `Phone: ${data.phone}`;
+                    document.getElementById('profilebf').textContent = `Break Fast: ${data.bf}`;
+                    document.getElementById('profileLunch').textContent = `Lunch: ${data.lunch}`;
+                    document.getElementById('profileDinner').textContent = `Dinner: ${data.dinner}`;
+                    
+                    // Show the profile overlay
+                }
+            })
+            .catch(error => {
+                console.error('Error fetching profile data:', error);
+            });
+        }
+
+        // Function to close the profile overlay
+        function closeProfileOverlay() {
+            document.getElementById('profileOverlay').style.display = 'none'; // Hide the profile overlay
+        }
 
 
     </script>

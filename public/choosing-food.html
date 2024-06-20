@@ -249,7 +249,7 @@
                         <input type="radio" id="bf-no" name="bf-choice" value="0" >
                         <label for="bf-no">No</label>
                     </div>
-                    <input type="text" id="bf-reason" name="bfreason" class="hidden" style="width: 100%; display: none;" placeholder="Enter Reason....."  > 
+                    <input type="text" id="bf-reason" name="bfreason" class="hidden" style="width: 100%; display: none;" placeholder="Enter Reason....." maxlength="150" > 
                     
                 </div>
                 <span> LUNCH</span>
@@ -272,7 +272,7 @@
                         <input type="radio" id="lunch-no" name="lunch-choice" value="0" >
                         <label for="lunch-no">No</label>
                     </div>
-                    <input type="text" id="lunch-reason" class="hidden" name="lunchreason" style="width: 100%; display: none;" placeholder="Enter Reason....."    > 
+                    <input type="text" id="lunch-reason" class="hidden" name="lunchreason" style="width: 100%; display: none;" placeholder="Enter Reason....."  maxlength="150"  > 
                     
                 </div>
                 <span>DINNER </span>
@@ -295,7 +295,7 @@
                         <input type="radio" id="dinner-no" name="dinner-choice" value="0" >
                         <label for="dinner-no">No</label>
                     </div>
-                    <input type="text" id="dinner-reason" class="hidden" name="dinnerreason" style="width: 100%; display: none;" placeholder="Enter Reason....."  > 
+                    <input type="text" id="dinner-reason" class="hidden" name="dinnerreason" style="width: 100%; display: none;" placeholder="Enter Reason....." maxlength="150" > 
                     
                     
                 </div>
@@ -422,6 +422,7 @@
             // Update the board whenever the selection changes
             //updateBoard();
         }
+        
 
         function updateBoard() {
             let bfSelectedValue = bfYesRadio.checked ? bfSelectedSize.value : bfNoRadio.value;
@@ -467,10 +468,94 @@
         }
         updateContentBasedOnTime();
 
+
+        function functiontoSetSelectedValues() 
+        {
+            let foodPreferences = {
+                bf: 0.00,
+                bfReason: '',
+                lunch: 0.00,
+                lunchReason: '',
+                dinner: 0.00,
+                dinnerReason: ''
+            };
+
+            fetch('/setvalue')
+                .then(response => response.json())
+                .then(data => {
+                    foodPreferences.bf = parseFloat(data.bf);
+                    foodPreferences.bfReason = data.bfreason;
+                    foodPreferences.lunch = parseFloat(data.lunch);
+                    foodPreferences.lunchReason = data.lreason;
+                    foodPreferences.dinner = parseFloat(data.dinner);
+                    foodPreferences.dinnerReason = data.dreason;
+
+                    // Set values in reason input
+                    
+                    
+                    
+
+                    // Set radio buttons and select options
+                    if (foodPreferences.bf === 0) {
+                        bfNoRadio.checked = true;
+                        br.value = foodPreferences.bfReason;
+                    } else {
+                        bfYesRadio.checked = true;
+                        for (let i = 0; i < bfSelectedSize.options.length; i++) {
+                            if (parseFloat(bfSelectedSize.options[i].value) === foodPreferences.bf) {
+                                bfSelectedSize.options[i].selected = true;
+                                break;
+                            }
+                        }
+                    }
+
+                    if (foodPreferences.lunch === 0) {
+                        lunchNoRadio.checked = true;
+                        lr.value = foodPreferences.lunchReason;
+                    } else {
+                        lunchYesRadio.checked = true;
+                        for (let i = 0; i < lunchSelectedSize.options.length; i++) {
+                            if (parseFloat(lunchSelectedSize.options[i].value) === foodPreferences.lunch) {
+                                lunchSelectedSize.options[i].selected = true;
+                                break;
+                            }
+                        }
+                    }
+
+                    if (foodPreferences.dinner === 0) {
+                        dinnerNoRadio.checked = true;
+                        dr.value = foodPreferences.dinnerReason;
+                    } else {
+                        dinnerYesRadio.checked = true;
+                        for (let i = 0; i < dinnerSelectedSize.options.length; i++) {
+                            if (parseFloat(dinnerSelectedSize.options[i].value) === foodPreferences.dinner) {
+                                dinnerSelectedSize.options[i].selected = true;
+                                break;
+                            }
+                        }
+                    }
+
+                    // Call check functions to update UI
+                    checkbf();
+                    checkLunch();
+                    checkDinner();
+                })
+                .catch(error => {
+                    console.error('Error fetching admin data:', error);
+                    alert('Error fetching admin data. Please try again after login');
+                    window.location.href = './login.html';
+                });
+        }
+
+
+
+
         document.addEventListener('DOMContentLoaded', function() {
+        
+        functiontoSetSelectedValues();
 
         document.getElementById('choose-food-form').addEventListener('submit', function(event) {
-            console.log("inside a submit ");
+            // console.log("inside a submit ");
             event.preventDefault(); // Prevent default form submission
            
             // conditon for not empty 
@@ -522,7 +607,10 @@
             const formData = {
                 bf : bfSelectedValue,
                 lunch: lunchSelectedValue,
-                dinner: dinnerSelectedValue
+                dinner: dinnerSelectedValue,
+                bfreason:bm.textContent,
+                lreason: lm.textContent,
+                dreason: dm.textContent
             };
             //alert(formData.lunch,formData.dinner );
 
