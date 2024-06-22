@@ -207,6 +207,43 @@
             opacity: 70%;
             color: #3e3e3e;
         }
+        input[type="checkbox"]
+        {
+            display: none;
+        }
+        .check-label {
+            border: 2px solid transparent;
+            padding: 5px;
+            display: flexbox;
+            position: relative;
+            padding-left: 30px; /* Adjust padding to make space for the tick */
+            margin: 5px;
+            border: 1px solid rgb(194, 187, 187);
+            border-radius: 10%;
+            background-color: #e7d8d887;
+        }
+        .check-label:hover
+        {
+            cursor:grab;
+        }
+
+        .checked-label {
+            
+            border: 2px solid rgb(52, 227, 140);
+            border-radius: 10%;
+        }
+
+        .checked-label::after {
+            content: '✔';  
+            position: absolute;
+            left: 5px;  
+            top: 50%;  
+            transform: translateY(-50%);  
+            color: #00805c87;  
+            font-size: 20px;  
+        }
+
+
         
 
 
@@ -300,7 +337,7 @@
             </div>
             <div class="to-change-student" id="after-11" style="display: none;">
                 <form>
-                    <img src="./foodpanda-food.gif"  style="width: 40%; ">
+                    <img src="./foodpanda-food.gif" draggable="false"  style="width: 40%; ">
                     <br>
                     
                     <h5 class="" style="text-align: center; margin: 10px; margin-left: 10%;">Users are  Choosing ............ </h5> 
@@ -311,11 +348,11 @@
             <div  id="checking">
                 <h3>Check Absent</h3>
                 <input type="checkbox" name="check-absent" id="forbf">
-                <label for="forbf">BREAKFAST </label>
+                <label for="forbf"  class="check-label">BREAKFAST </label>
                 <input type="checkbox" name="check-absent" id="forlunch">
-                <label for="forlunch">LUNCH</label>
+                <label for="forlunch"  class="check-label">LUNCH</label>
                 <input type="checkbox" name="check-absent" id="fordinner">
-                <label for="fordinner">DINNER</label>
+                <label for="fordinner"  class="check-label">DINNER</label>
                 <br>
                 <button type="button" id="buttonchecking" class="btn btn-outline-info" style="margin:2% auto 10px 40%;" onclick="checking(event)">Check</button>
 
@@ -390,6 +427,19 @@
             }
         }
         updateContentBasedOnTime();
+
+        document.querySelectorAll('input[type="checkbox"]').forEach(checkbox => {
+            checkbox.addEventListener('change', function() {
+                const label = document.querySelector(`label[for="${this.id}"]`);
+                if (this.checked) {
+                    label.classList.add('checked-label');
+                } else {
+                    label.classList.remove('checked-label');
+                }
+            });
+        });
+
+
         function convertMillisecondsToDate() 
         {
             const currentDate = new Date();
@@ -492,7 +542,7 @@
                 .catch(error => {
                     console.error('Error fetching admin data:', error);
                     alert('Error fetching admin data.  Please try again after login  ');
-                    window.location.href = './login.html';
+                     window.location.href = './login.html';
                 });
         });
 
