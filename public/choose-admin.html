@@ -12,6 +12,10 @@
             text-align: center;
             padding-left: 0;
         }
+        .container-fluid
+        {
+            position: relative;
+        }
         .my {
             display: flex;
             justify-content: space-between;
@@ -164,6 +168,35 @@
             cursor: pointer;
             color: rgb(177, 126, 126);
         }
+        .information
+        {
+            top:  100px;
+            right: 10px;
+            position:absolute;
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            border:3px dashed;
+            border-color: rgb(154, 140, 140);
+            background-color: rgb(229, 255, 255);
+            z-index: -1;
+            transition: border 0.3s ease-in-out, filter 0.3s ease-in-out;
+        }
+        .information svg
+        {
+            width: 30px; /* Set your desired width */
+            height: 30px;
+            opacity: 70%;
+            color: #3e3e3e;
+            
+        }
+        .information:hover
+        {
+            filter: brightness(1.0);
+            border: 5px solid whitesmoke;
+            background-color: white;
+        }
+
          
 
 
@@ -177,6 +210,7 @@
     
     <nav class="navbar navbar-dark bg-dark my" aria-label="First navbar example">
         <div class="container-fluid">
+            
             <div class="col-md-3 mb-2 mb-md-0 logo">
                 <a href="" class="d-inline-flex link-body-emphasis text-decoration-none" >
                     <!-- Insert logo image -->
@@ -191,32 +225,36 @@
             </button>
     
             <div class="navbar-collapse collapse" id="navbarsExample01">
-
-                
-                    <ul class="navbar-nav me-auto mb-2">
-                        <li class="nav-item">
-                            <a class="nav-link active" aria-current="page" href="./admine-home.html">Home</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link" href="./admine-main.html">Main page</a> 
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link active" aria-current="page" href="./make-admine.html">Make Admine</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link" href="#" onclick="showProfileOverlay(event)">Profile</a>
-                        </li>
-                        
-                        
-                        <li class="nav-item">
-                            <a class="nav-link active" aria-current="page"  id="signout-button" href="#" onclick="fetch('/signout', {method: 'POST'}).then(response => { if (response.ok) window.location.href = '/login.html'; else alert('Failed to sign out.'); }).catch(error => { console.error('Error during signout:', error); alert('Failed to sign out.'); });">Sign Out<svg style="margin-left: 10px;" xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor"  class="bi bi-box-arrow-right" viewBox="0 0 16 16">
-                                <path fill-rule="evenodd" d="M10 12.5a.5.5 0 0 1-.5.5h-8a.5.5 0 0 1-.5-.5v-9a.5.5 0 0 1 .5-.5h8a.5.5 0 0 1 .5.5v2a.5.5 0 0 0 1 0v-2A1.5 1.5 0 0 0 9.5 2h-8A1.5 1.5 0 0 0 0 3.5v9A1.5 1.5 0 0 0 1.5 14h8a1.5 1.5 0 0 0 1.5-1.5v-2a.5.5 0 0 0-1 0z"/>
-                                <path fill-rule="evenodd" d="M15.854 8.354a.5.5 0 0 0 0-.708l-3-3a.5.5 0 0 0-.708.708L14.293 7.5H5.5a.5.5 0 0 0 0 1h8.793l-2.147 2.146a.5.5 0 0 0 .708.708z"/>
-                              </svg></a>
-                        </li>
-                        
-                    </ul>
+                <ul class="navbar-nav me-auto mb-2">
+                    <li class="nav-item">
+                        <a class="nav-link active" aria-current="page" href="./admine-home.html">Home</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="./admine-main.html">Main page</a> 
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link active" aria-current="page" href="./make-admine.html">Make Admine</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#" onclick="showProfileOverlay(event)">Profile</a>
+                    </li>
+                    
+                    
+                    <li class="nav-item">
+                        <a class="nav-link active" aria-current="page"  id="signout-button" href="#" onclick="fetch('/signout', {method: 'POST'}).then(response => { if (response.ok) window.location.href = '/login.html'; else alert('Failed to sign out.'); }).catch(error => { console.error('Error during signout:', error); alert('Failed to sign out.'); });">Sign Out<svg style="margin-left: 10px;" xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor"  class="bi bi-box-arrow-right" viewBox="0 0 16 16">
+                            <path fill-rule="evenodd" d="M10 12.5a.5.5 0 0 1-.5.5h-8a.5.5 0 0 1-.5-.5v-9a.5.5 0 0 1 .5-.5h8a.5.5 0 0 1 .5.5v2a.5.5 0 0 0 1 0v-2A1.5 1.5 0 0 0 9.5 2h-8A1.5 1.5 0 0 0 0 3.5v9A1.5 1.5 0 0 0 1.5 14h8a1.5 1.5 0 0 0 1.5-1.5v-2a.5.5 0 0 0-1 0z"/>
+                            <path fill-rule="evenodd" d="M15.854 8.354a.5.5 0 0 0 0-.708l-3-3a.5.5 0 0 0-.708.708L14.293 7.5H5.5a.5.5 0 0 0 0 1h8.793l-2.147 2.146a.5.5 0 0 0 .708.708z"/>
+                          </svg></a>
+                    </li>
+                    
+                </ul>
             </div>
+            <button  type="button" class="information" onclick="info()" >
+                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-info-lg" viewBox="0 0 16 16">
+                    <path d="m9.708 6.075-3.024.379-.108.502.595.108c.387.093.464.232.38.619l-.975 4.577c-.255 1.183.14 1.74 1.067 1.74.72 0 1.554-.332 1.933-.789l.116-.549c-.263.232-.65.325-.905.325-.363 0-.494-.255-.402-.704zm.091-2.755a1.32 1.32 0 1 1-2.64 0 1.32 1.32 0 0 1 2.64 0"/>
+                </svg>
+        
+            </button>
         </div>
     </nav>
 
@@ -340,6 +378,7 @@
     <div id="dmessage" style="display: none;">I ordered my Dinner</div>
 
 
+    
 
 
 
@@ -451,8 +490,9 @@
         function updateContentBasedOnTime() {
             const now = new Date();
             const hours = now.getHours();
-            // Check if the time is after 11 AM (11:00)
-            if (hours >= 23) { 
+            const min = now.getMinutes();
+            // form will be removed when user come between 10 to 6
+            if ((hours >= 22 ) || (hours < 6 )) { 
                 const forms = document.getElementsByClassName('form-for-food');
                 for (let i = 0; i < forms.length; i++) {
                     forms[i].style.display = 'none';
@@ -689,6 +729,16 @@
         function closeProfileOverlay() {
             document.getElementById('profileOverlay').style.display = 'none'; // Hide the profile overlay
         }
+
+
+    function info()
+    {
+        let l = " Lunch : 6:00 AM to 09:30 AM \n";
+        let b = "For Next Day BreakFast : 05:00 PM to 10:00 PM \n";
+        let d = " Dinner : 12:00 PM to 02:30 PM \n";
+        alert(" Responcing Time : \n"+l+d+b);
+    }
+
 
 
     </script>
