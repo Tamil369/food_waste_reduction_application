@@ -241,9 +241,56 @@
             transform: translateY(-50%);  
             color: #00805c87;  
             font-size: 20px;  
+        } 
+
+
+        .table-container {
+        width: 100%;
+        height: 400px; /* Set the desired height */
+        overflow: auto; /* Enable both horizontal and vertical scrolling */
+        border: 1px solid #ddd; /* Optional: add a border to the container */
+        }
+        table {
+            width: 100%;
+            border-collapse: separate;
+            border:3px solid rgb(193, 246, 255) ;
+        }
+        th, td {
+            border: 1px solid #000000;
+            padding: 8px;
+            white-space: nowrap; /* Prevent text from wrapping */
+        }
+        th {
+            text-align: left;
+        }
+        tr:nth-child(even) {
+            background-color: #f9f9f9;
+        }
+        tr:hover {
+            background-color: #7fe81d5f;
+        }
+        th {
+            padding-top: 12px;
+            padding-bottom: 12px;
+            background-color: #ffff397f;
+            color: #ff0606ab;
+        }
+        .download-btn {
+            display: inline-block;
+            padding: 8px 12px;
+            background-color: #87dcd2;
+            color: #000;
+            text-decoration: none;
+            border-radius: 5px;
+            margin-top: 10px;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
         }
 
-
+        .download-btn:hover {
+            background-color: #da8dc2;
+        }
+  
         
 
 
@@ -406,7 +453,7 @@
 
 
 
-
+    <script src="https://raw.githack.com/eKoopmans/html2pdf/master/dist/html2pdf.bundle.js"></script>
     <script>
         /*****************WRITE YOUR JS CODE DOWN ***************DONT CHANGE ANYTHING**************** */
         function updateContentBasedOnTime() {
@@ -428,16 +475,22 @@
         }
         updateContentBasedOnTime();
 
-        document.querySelectorAll('input[type="checkbox"]').forEach(checkbox => {
-            checkbox.addEventListener('change', function() {
-                const label = document.querySelector(`label[for="${this.id}"]`);
-                if (this.checked) {
-                    label.classList.add('checked-label');
-                } else {
-                    label.classList.remove('checked-label');
-                }
+        function checkedAddition()
+        {
+            document.querySelectorAll('input[type="checkbox"]').forEach(checkbox => {
+                checkbox.addEventListener('change', function() {
+                    const label = document.querySelector(`label[for="${this.id}"]`);
+                    if (this.checked) {
+                        label.classList.add('checked-label');
+                    } else {
+                        label.classList.remove('checked-label');
+                    }
+                });
             });
-        });
+        }
+
+
+        checkedAddition();
 
 
         function convertMillisecondsToDate() 
@@ -505,7 +558,52 @@
             }
         }
 
-        function fetchAbsentData(meal) {
+        // function fetchAbsentData(meal) {
+        //     fetch('/check-absent', {
+        //         method: 'POST',
+        //         headers: {
+        //             'Content-Type': 'application/json'
+        //         },
+        //         body: JSON.stringify({ meal: meal })
+        //     })
+        //     .then(response => response.json())
+        //     .then(data => {
+        //         let displayText = '<ol> <hr>';
+        //         data.forEach(item => {
+        //             displayText += `<li>Name: ${item.name}, Phone: ${item.phone},  Year: ${item.year},  Dept: ${item.dept} , Date:${convertMillisecondsToDate()} </li> <hr>`;
+
+        //         });
+        //         displayText += '</ol>';
+        //         document.getElementById('todisplay').innerHTML = displayText;
+        //     })
+        //     .catch(error => {
+        //         console.error('Error fetching absent data:', error);
+        //         document.getElementById('todisplay').textContent = 'Error fetching absent data. Please try again later.';
+        //     });
+        // }
+        function filterTable() {
+            const checkedDepts = Array.from(document.querySelectorAll('.dept-filter:checked')).map(cb => cb.value);
+            const checkedYears = Array.from(document.querySelectorAll('.year-filter:checked')).map(cb => cb.value);
+
+            const table = document.getElementById('sampleTable');
+            const rows = table.getElementsByTagName('tr');
+
+            for (let i = 1; i < rows.length; i++) {
+                const cells = rows[i].getElementsByTagName('td');
+                const dept = cells[4].textContent;
+                const year = cells[3].textContent;
+
+                if ((checkedDepts.length === 0 || checkedDepts.includes(dept)) &&
+                    (checkedYears.length === 0 || checkedYears.includes(year))) {
+                    rows[i].style.display = '';
+                } else {
+                    rows[i].style.display = 'none';
+                }
+            }
+        }
+        function fetchAbsentData(meal) 
+        {
+            let id =1;
             fetch('/check-absent', {
                 method: 'POST',
                 headers: {
@@ -515,19 +613,67 @@
             })
             .then(response => response.json())
             .then(data => {
-                let displayText = '<ol> <hr>';
-                data.forEach(item => {
-                    displayText += `<li>Name: ${item.name}, Phone: ${item.phone},  Year: ${item.year},  Dept: ${item.dept} , Date:${convertMillisecondsToDate()} </li> <hr>`;
+                let displayText = `
+                <div class="table-container" id='tabcon'>
+                    <h5>Filter by Department</h5>
+                        <label class="check-label" for='fcse'><input type="checkbox" class="dept-filter" value="CSE" id='fcse'> CSE</label>
+                        <label class="check-label" for='fcivil'><input type="checkbox" class="dept-filter" value="CIVIL" id='fcivil'> CIVIL</label>
+                        <label class="check-label" for='fmech'><input type="checkbox" class="dept-filter" value="MECH" id='fmech'> MECH</label>
+                        <label class="check-label" for='fece'><input type="checkbox" class="dept-filter" value="ECE" id='fece'> ECE</label>
+                        <label class="check-label" for='feee'><input type="checkbox" class="dept-filter" value="EEE" id='feee'> EEE</label>
 
+                        <h5>Filter by Year</h5>
+                        <label class="check-label" for='f1'><input type="checkbox" class="year-filter" value="I" id='f1'> I</label>
+                        <label class="check-label" for='f2'><input type="checkbox" class="year-filter" value="II" id='f2'> II</label>
+                        <label class="check-label" for='f3'><input type="checkbox" class="year-filter" value="III" id='f3'> III</label>
+                        <label class="check-label" for='f4'><input type="checkbox" class="year-filter" value="IV" id='f4'> IV</label>
+                    <table id="sampleTable">
+                        <thead>
+                            <tr>
+                                <th>ID</th>
+                                <th>Name</th>
+                                <th>Phone</th>
+                                <th>Year</th>
+                                <th>Dept</th>
+                                <th>Date</th>
+                            </tr>
+                        </thead>
+                        <tbody>`;
+                data.forEach(item => {
+                    displayText += `
+                        <tr>
+                            <td>${id}</td>
+                            <td>${item.name}</td>
+                            <td>${item.phone}</td>
+                            <td>${item.year}</td>
+                            <td>${item.dept}</td>
+                            <td>${convertMillisecondsToDate()}</td>
+                        </tr>`;
+                    id=id+1;
                 });
-                displayText += '</ol>';
+                displayText += `
+                        </tbody>
+                    </table>
+                </div>
+                <button class="download-btn" onclick="downloadPDF('sampleTable')">Download PDF</button>
+                `;
                 document.getElementById('todisplay').innerHTML = displayText;
+                
+                document.querySelectorAll('.dept-filter, .year-filter').forEach(filter => {
+                    filter.addEventListener('change', filterTable);
+                    console.log("entered here");
+                });
+                checkedAddition();
+
             })
             .catch(error => {
                 console.error('Error fetching absent data:', error);
                 document.getElementById('todisplay').textContent = 'Error fetching absent data. Please try again later.';
             });
+
+            
         }
+
 
 
         document.addEventListener('DOMContentLoaded', () => {
@@ -638,6 +784,41 @@
 
             openUploadOverlay(formattedDateString);
         });
+
+        function downloadPDF(sectionId) {
+            
+            const table = document.getElementById('sampleTable');
+            const clone = table.cloneNode(true);
+
+            const checkedDepts = Array.from(document.querySelectorAll('.dept-filter:checked')).map(cb => cb.value);
+            const checkedYears = Array.from(document.querySelectorAll('.year-filter:checked')).map(cb => cb.value);
+
+            const rows = clone.querySelectorAll('tbody tr');
+
+            rows.forEach(row => {
+                const year = row.cells[3].textContent.trim();
+                const dept = row.cells[4].textContent.trim();
+
+                if (
+                    (!checkedDepts.length || checkedDepts.includes(dept)) &&
+                    (!checkedYears.length || checkedYears.includes(year))
+                ) {
+                    row.style.display = '';
+                } else {
+                    row.style.display = 'none';
+                }
+            });
+
+            const filterSection = document.querySelector('.table-container').cloneNode(true);
+            clone.insertBefore(filterSection, clone.firstChild);
+
+            const milliseconds = Date.now();
+
+            html2pdf()
+                .from(clone)
+                .save(`filteredtableAT${milliseconds}.pdf`);
+
+        }
 
                 
 
