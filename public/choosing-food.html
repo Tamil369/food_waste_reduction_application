@@ -207,7 +207,52 @@
         .reason {
             transition: opacity 0.3s ease;
         }
+        .notice-container {
+          background-color: #3e3e3e;
+           overflow: hidden;
+           text-align: center;
+           width: 100%;
+        }
 
+        .notice {
+            display: inline-block;
+            color: aqua;
+            padding: 10px 0;
+            animation: scrolle 5s alternate infinite;
+        }
+        .notice::selection
+        {
+            color: rgb(140, 149, 149);
+        }
+
+        @keyframes scrolle {
+            0% {
+                transform: translateX(100%);
+            }
+            100% {
+                transform: translateX(-100%);
+            }
+        }
+        .today
+        {
+            background-color: #a3d6e6;
+            border: 2px solid rgb(220, 212, 168);
+            border-radius: 10%;
+            width: 120px;
+            height: 30px;
+            display: inline;
+            margin-left: 40%;
+            margin-top: 0%;
+            margin-bottom: none;
+            padding-bottom: none;
+        }
+        .today:hover
+        {
+            border: solid rgb(237, 237, 237);
+            background-color: aqua;
+            
+        }
+        
 
 
          
@@ -274,10 +319,16 @@
 
 
     <!--*****************WRITE YOUR HTML CODE DOWN **************DONT CHANGE ANYTHING***************** */-->
-    
+    <button type="button" id="tomorrow" class="today" onclick="window.location.href='./Tchoosing-food.html'">For Tomorrow</button>
     <div class="out">  
-        <div class="container">  
+        <div class="container">
+             
             <form class="form-for-food" id="choose-food-form">
+                <div class="notice-container">
+                    <div class="notice" id="not">
+                        Today:
+                    </div>
+                </div>
                 <span> BREAK FAST</span>
                 <div class=" for" id="bf-form"  name="bf" > 
                     
@@ -441,6 +492,9 @@
         dinnerYesRadio.addEventListener("change", checkDinner);
         dinnerNoRadio.addEventListener("change", checkDinner);
         
+        const notice = document.getElementById('not');
+        notice.textContent+=getTomorrowsDateinAdmine();
+
         const formarray = ['bf-form', 'lunch-form', 'dinner-form'];
 
         function checkbf() {
@@ -818,6 +872,21 @@
                 el.disabled = false;
                 el.setAttribute('tabindex', disabled ?  '0': '-1');
             });
+        }
+        function getTomorrowsDateinAdmine() {
+            // Create a new Date object for the current date
+            let today = new Date();
+            
+            // Add one day to the current date
+            let tomorrow = new Date(today);
+            tomorrow.setDate(today.getDate() + 0);
+            
+            // Format the date as needed (e.g., YYYY-MM-DD)
+            let year = tomorrow.getFullYear();
+            let month = String(tomorrow.getMonth() + 1).padStart(2, '0'); // Months are 0-indexed
+            let day = String(tomorrow.getDate()).padStart(2, '0');
+            
+            return `${day}-${month}-${year}`;
         }
 
         

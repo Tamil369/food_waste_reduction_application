@@ -285,21 +285,25 @@
             <div class="navbar-collapse collapse" id="navbarsExample01">
                 <ul class="navbar-nav me-auto mb-2">
                     <li class="nav-item">
-                        <a class="nav-link active" aria-current="page" href="./admine-home.html">Home</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="./admine-main.html">Main page</a> 
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link active" aria-current="page" href="./make-admine.html">Make Admine</a>
+                        <a class="nav-link active" aria-current="page" href="./student-home.html">Home</a>
                     </li>
                     <li class="nav-item">
                         <a class="nav-link" href="#" onclick="showProfileOverlay(event)">Profile</a>
+
                     </li>
-                    
-                    
                     <li class="nav-item">
-                        <a class="nav-link active" aria-current="page"  id="signout-button" href="#" onclick="fetch('/signout', {method: 'POST'}).then(response => { if (response.ok) window.location.href = '/login.html'; else alert('Failed to sign out.'); }).catch(error => { console.error('Error during signout:', error); alert('Failed to sign out.'); });">Sign Out<svg style="margin-left: 10px;" xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor"  class="bi bi-box-arrow-right" viewBox="0 0 16 16">
+                        <a class="nav-link active" aria-current="page" href="#">QR code</a>
+                    </li>
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle" href="#" data-bs-toggle="dropdown" aria-expanded="false">Contact</a>
+                        <ul class="dropdown-menu">
+                            <li><a class="dropdown-item" href="#">E-mail</a></li>
+                            <li><a class="dropdown-item" href="#">Call </a></li>
+                            <li><a class="dropdown-item" href="#">Letter</a></li>
+                        </ul>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link active" aria-current="page"  id="signout-button" href="#" onclick="fetch('/signout', {method: 'POST'}).then(response => { if (response.ok) window.location.href = '/login.html'; else alert('Failed to sign out.'); }).catch(error => { console.error('Error during signout:', error); alert('Failed to sign out.'); });" >Sign Out<svg style="margin-left: 10px;" xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor"  class="bi bi-box-arrow-right" viewBox="0 0 16 16">
                             <path fill-rule="evenodd" d="M10 12.5a.5.5 0 0 1-.5.5h-8a.5.5 0 0 1-.5-.5v-9a.5.5 0 0 1 .5-.5h8a.5.5 0 0 1 .5.5v2a.5.5 0 0 0 1 0v-2A1.5 1.5 0 0 0 9.5 2h-8A1.5 1.5 0 0 0 0 3.5v9A1.5 1.5 0 0 0 1.5 14h8a1.5 1.5 0 0 0 1.5-1.5v-2a.5.5 0 0 0-1 0z"/>
                             <path fill-rule="evenodd" d="M15.854 8.354a.5.5 0 0 0 0-.708l-3-3a.5.5 0 0 0-.708.708L14.293 7.5H5.5a.5.5 0 0 0 0 1h8.793l-2.147 2.146a.5.5 0 0 0 .708.708z"/>
                           </svg></a>
@@ -315,14 +319,14 @@
 
 
     <!--*****************WRITE YOUR HTML CODE DOWN **************DONT CHANGE ANYTHING***************** */-->
-    <button type="button" id="tomorrow" class="today" onclick="window.location.href='./Tchoose-admin.html'">For Tomorrow</button>
+    <button type="button" id="tomorrow" class="today" onclick="window.location.href='./choosing-food.html'">For Today</button>
     <div class="out">  
         <div class="container">
              
             <form class="form-for-food" id="choose-food-form">
                 <div class="notice-container">
                     <div class="notice" id="not">
-                        Today:
+                        Tomorrow:
                     </div>
                 </div>
                 <span> BREAK FAST</span>
@@ -584,7 +588,7 @@
             const bd = document.querySelector('body');
             bd.style.backgroundImage = 'block';
         }
-        updateContentBasedOnTime();
+        // updateContentBasedOnTime();
 
 
         function functiontoSetSelectedValues() 
@@ -598,15 +602,15 @@
                 dinnerReason: ''
             };
 
-            fetch('/setvalue')
+            fetch('/Tsetvalue')
                 .then(response => response.json())
                 .then(data => {
-                    foodPreferences.bf = parseFloat(data.bf);
-                    foodPreferences.bfReason = data.bfreason;
-                    foodPreferences.lunch = parseFloat(data.lunch);
-                    foodPreferences.lunchReason = data.lreason;
-                    foodPreferences.dinner = parseFloat(data.dinner);
-                    foodPreferences.dinnerReason = data.dreason;
+                    foodPreferences.bf = parseFloat(data.Tbf);
+                    foodPreferences.bfReason = data.Tbfreason;
+                    foodPreferences.lunch = parseFloat(data.Tlunch);
+                    foodPreferences.lunchReason = data.Tlreason;
+                    foodPreferences.dinner = parseFloat(data.Tdinner);
+                    foodPreferences.dinnerReason = data.Tdreason;
 
                     // Set values in reason input
                     
@@ -671,8 +675,6 @@
         document.addEventListener('DOMContentLoaded', function() {
         
         functiontoSetSelectedValues();
-        updateFormVisibility();
-        setInterval(updateFormVisibility, 60000); // Check every minute
 
 
         document.getElementById('choose-food-form').addEventListener('submit', function(event) {
@@ -736,7 +738,7 @@
             //alert(formData.lunch,formData.dinner );
 
             // Send data to server
-            fetch('/choose-food', {
+            fetch('/Tchoose-food', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json'
@@ -796,9 +798,9 @@
                     document.getElementById('profileUserId').textContent = `User ID: ${data.user_id}`;
                     document.getElementById('profileRegNo').textContent = `Reg No: ${data.reg_no}`;
                     document.getElementById('profilePhone').textContent = `Phone: ${data.phone}`;
-                    document.getElementById('profilebf').textContent = `Break Fast: ${data.bf}`;
-                    document.getElementById('profileLunch').textContent = `Lunch: ${data.lunch}`;
-                    document.getElementById('profileDinner').textContent = `Dinner: ${data.dinner}`;
+                    document.getElementById('profilebf').textContent = `Today Break Fast: ${data.bf}`;
+                    document.getElementById('profileLunch').textContent = `Today Lunch: ${data.lunch}`;
+                    document.getElementById('profileDinner').textContent = `Today Dinner: ${data.dinner}`;
                     
                     // Show the profile overlay
                 }
@@ -875,7 +877,7 @@
             
             // Add one day to the current date
             let tomorrow = new Date(today);
-            tomorrow.setDate(today.getDate() + 0);
+            tomorrow.setDate(today.getDate() + 1);
             
             // Format the date as needed (e.g., YYYY-MM-DD)
             let year = tomorrow.getFullYear();

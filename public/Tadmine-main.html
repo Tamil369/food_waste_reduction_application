@@ -413,19 +413,19 @@
     <!--*****************WRITE YOUR HTML CODE DOWN **************DONT CHANGE ANYTHING***************** */-->
 
 
-    <button type="button" id="tomorrow" class="today" onclick="window.location.href='./Tadmine-main.html'">For Tomorrow</button>
+    <button type="button" id="tomorrow" class="today" onclick="window.location.href='./admine-main.html'">For Today</button>
     <div class="out">  
         <div class="container">  
             
             <div class="notice-container">
                 <div class="notice" id="not">
-                    Today:
+                    Tomorrow:
                 </div>
             </div>
             <div class="to-change-student" id="student-detail" style="display: block;">
                 <form>
                     <p style="display: flex;">
-                        <h4 class="para" > Number Of Students Going to have food In Hostel :</h4> 
+                        <h4 class="para" > Number Of Students Going to have food In Hostel Tomorrow :</h4> 
                     </p>
                     <hr>
                     <h5 class="num">  
@@ -534,7 +534,7 @@
                 student.style.display='block';
              }
         }
-        updateContentBasedOnTime();
+        // updateContentBasedOnTime();
 
         function checkedAddition()
         {
@@ -665,7 +665,7 @@
         function fetchAbsentData(meal) 
         {
             let id =1;
-            fetch('/check-absent', {
+            fetch('/Tcheck-absent', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json'
@@ -738,7 +738,7 @@
 
 
         document.addEventListener('DOMContentLoaded', () => {
-            fetch('/admin-main-data')
+            fetch('/Tadmin-main-data')
                 .then(response => response.json())
                 .then(data => {
                     document.getElementById('totalbf').textContent = data.totalbf;
@@ -888,7 +888,7 @@
             
             // Add one day to the current date
             let tomorrow = new Date(today);
-            tomorrow.setDate(today.getDate() + 0);
+            tomorrow.setDate(today.getDate() + 1);
             
             // Format the date as needed (e.g., YYYY-MM-DD)
             let year = tomorrow.getFullYear();

@@ -2,3 +2,8 @@
     box-sizing: border-box;
     font-family: Arial, sans-serif;
 }
+*::selection
+        {
+            color: #938787;
+            background-color: rgba(187, 154, 218, 0.315);
+        }

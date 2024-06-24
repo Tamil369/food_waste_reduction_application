@@ -315,14 +315,14 @@
 
 
     <!--*****************WRITE YOUR HTML CODE DOWN **************DONT CHANGE ANYTHING***************** */-->
-    <button type="button" id="tomorrow" class="today" onclick="window.location.href='./Tchoose-admin.html'">For Tomorrow</button>
+    <button type="button" id="tomorrow" class="today" onclick="window.location.href='./choose-admin.html'">For Today</button>
     <div class="out">  
         <div class="container">
              
             <form class="form-for-food" id="choose-food-form">
                 <div class="notice-container">
                     <div class="notice" id="not">
-                        Today:
+                        Tomorrow:
                     </div>
                 </div>
                 <span> BREAK FAST</span>
@@ -584,7 +584,7 @@
             const bd = document.querySelector('body');
             bd.style.backgroundImage = 'block';
         }
-        updateContentBasedOnTime();
+        // updateContentBasedOnTime();
 
 
         function functiontoSetSelectedValues() 
@@ -598,15 +598,15 @@
                 dinnerReason: ''
             };
 
-            fetch('/setvalue')
+            fetch('/Tsetvalue')
                 .then(response => response.json())
                 .then(data => {
-                    foodPreferences.bf = parseFloat(data.bf);
-                    foodPreferences.bfReason = data.bfreason;
-                    foodPreferences.lunch = parseFloat(data.lunch);
-                    foodPreferences.lunchReason = data.lreason;
-                    foodPreferences.dinner = parseFloat(data.dinner);
-                    foodPreferences.dinnerReason = data.dreason;
+                    foodPreferences.bf = parseFloat(data.Tbf);
+                    foodPreferences.bfReason = data.Tbfreason;
+                    foodPreferences.lunch = parseFloat(data.Tlunch);
+                    foodPreferences.lunchReason = data.Tlreason;
+                    foodPreferences.dinner = parseFloat(data.Tdinner);
+                    foodPreferences.dinnerReason = data.Tdreason;
 
                     // Set values in reason input
                     
@@ -671,8 +671,6 @@
         document.addEventListener('DOMContentLoaded', function() {
         
         functiontoSetSelectedValues();
-        updateFormVisibility();
-        setInterval(updateFormVisibility, 60000); // Check every minute
 
 
         document.getElementById('choose-food-form').addEventListener('submit', function(event) {
@@ -736,7 +734,7 @@
             //alert(formData.lunch,formData.dinner );
 
             // Send data to server
-            fetch('/choose-food', {
+            fetch('/Tchoose-food', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json'
@@ -796,9 +794,9 @@
                     document.getElementById('profileUserId').textContent = `User ID: ${data.user_id}`;
                     document.getElementById('profileRegNo').textContent = `Reg No: ${data.reg_no}`;
                     document.getElementById('profilePhone').textContent = `Phone: ${data.phone}`;
-                    document.getElementById('profilebf').textContent = `Break Fast: ${data.bf}`;
-                    document.getElementById('profileLunch').textContent = `Lunch: ${data.lunch}`;
-                    document.getElementById('profileDinner').textContent = `Dinner: ${data.dinner}`;
+                    document.getElementById('profilebf').textContent = `Today Break Fast: ${data.bf}`;
+                    document.getElementById('profileLunch').textContent = `Today Lunch: ${data.lunch}`;
+                    document.getElementById('profileDinner').textContent = `Today Dinner: ${data.dinner}`;
                     
                     // Show the profile overlay
                 }
@@ -875,7 +873,7 @@
             
             // Add one day to the current date
             let tomorrow = new Date(today);
-            tomorrow.setDate(today.getDate() + 0);
+            tomorrow.setDate(today.getDate() + 1);
             
             // Format the date as needed (e.g., YYYY-MM-DD)
             let year = tomorrow.getFullYear();
