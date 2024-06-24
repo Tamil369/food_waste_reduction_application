@@ -180,6 +180,55 @@ app.post('/check-absent', (req, res) => {
 
     }
 });
+app.post('/Tcheck-absent', (req, res) => {
+    if (!req.session.user.username) {
+        return res.status(404).json({redirect: '/login', message: 'Please log in first'}); 
+        // Redirect to login page if not logged in
+    }
+    try
+    {
+        const meal = req.body.meal;
+        let query;
+    
+        switch (meal) {
+            case 'breakfast':
+                query = 'SELECT name, phone, year, dept FROM Profile WHERE Tbf = 0';
+                break;
+            case 'lunch':
+                query = 'SELECT name, phone, year, dept FROM Profile WHERE Tlunch = 0';
+                break;
+            case 'dinner':
+                query = 'SELECT name, phone, year, dept FROM Profile WHERE Tdinner = 0';
+                break;
+            case 'breakfast_and_lunch':
+                query = 'SELECT name, phone, year, dept FROM Profile WHERE Tbf = 0 AND Tlunch = 0';
+                break;
+            case 'breakfast_and_dinner':
+                query = 'SELECT name, phone, year, dept FROM Profile WHERE Tbf = 0 AND Tdinner = 0';
+                break;
+            case 'lunch_and_dinner':
+                query = 'SELECT name, phone, year, dept FROM Profile WHERE Tlunch = 0 AND Tdinner = 0';
+                break;
+            case 'all':
+                query = 'SELECT name, phone, year, dept FROM Profile WHERE Tbf = 0 AND Tlunch = 0 AND Tdinner = 0';
+                break;
+            default:
+                return res.status(400).json({ error: 'Invalid meal type' });
+        }
+    
+        db.query(query, (error, results) => {
+            if (error) {
+                console.error('Error executing query:', error);
+                return res.status(500).json({ error: 'Database query failed' });
+            }
+            res.json(results);
+        });
+    }
+    catch(error)
+    {
+
+    }
+});
 
 
 // Sign-up endpoint
@@ -306,6 +355,35 @@ app.post('/choose-food', (req, res) => {
       res.status(500).send('Internal Server Error');
     }
 });
+app.post('/Tchoose-food', (req, res) => {
+    try {
+      // Modified: Added session check
+      if (!req.session.user || !req.session.user.username) {
+        return res.status(404).json({ redirect: '/login', message: 'Please log in first' });
+      }
+  
+      // Modified: Email retrieval from session
+      const email = req.session.user.username;
+      console.log("Email is retrieved from session");
+      
+      const { bf, lunch, dinner, bfreason, lreason, dreason } = req.body;
+  
+      // Database update query
+      const updateQuery = `UPDATE Profile SET Tbf = ?, Tlunch = ?, Tdinner = ?, Tbfreason = ?, Tlreason = ?, Tdreason = ? WHERE user_id = ?`;
+      db.query(updateQuery, [bf, lunch, dinner, bfreason, lreason, dreason, email], (err, results) => {
+        if (err) {
+          console.error('Error updating food preferences:', err);
+          return res.status(500).send('Server error');
+        }
+        console.log('User is updated successfully:', email);
+        res.json({ message: 'Food preferences updated' });
+      });
+    } catch (error) {
+      // Modified: General error handling
+      console.error('Error in choose-food route:', error);
+      res.status(500).send('Internal Server Error');
+    }
+});
 
   
   
@@ -367,9 +445,54 @@ app.get('/admin-main-data', (req, res) => {
         }
     
 });
+//Tomorrow Admin-main page endpoint
+app.get('/Tadmin-main-data', (req, res) => {
+    try{
+        if (!req.session.user.username) {
+        return res.status(404).json({redirect: '/login', message: 'Please log in first'}); 
+        // Redirect to login page if not logged in
+    }
+    const query = 'SELECT SUM(Tbf) as totalbf, SUM(Tlunch) as totalLunch, SUM(Tdinner) as totalDinner, COUNT(*) as totalRows FROM Profile';
+
+    db.query(query, (err, results) => {
+        if (err) {
+            return res.status(500).send('Server error');
+        }
+
+        res.json(results[0]);
+    });
+    }catch (error) {
+            console.error('Error in choose-food route:', error);
+            res.status(500).send('Internal Server Error');
+        }
+    
+});
 
 // for initial update
 app.get('/setvalue', (req, res) => {
+    try{
+        if (!req.session.user.username) {
+        return res.status(404).json({redirect: '/login', message: 'Please log in first'}); 
+        // Redirect to login page if not logged in
+    }
+    let email = req.session.user.username;
+    const query = 'SELECT * FROM Profile WHERE user_id = ?';
+
+    db.query(query, [email], (err, results) => {
+        if (err) {
+            return res.status(500).send('Server error');
+        }
+
+        res.json(results[0]);
+    });
+    }catch (error) {
+            console.error('Error in choose-food route:', error);
+            res.status(500).send('Internal Server Error');
+        }
+    
+});
+// for initial update
+app.get('/Tsetvalue', (req, res) => {
     try{
         if (!req.session.user.username) {
         return res.status(404).json({redirect: '/login', message: 'Please log in first'}); 
