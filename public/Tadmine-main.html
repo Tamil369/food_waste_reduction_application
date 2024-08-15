@@ -565,13 +565,14 @@
             return `${day}-${month}-${year}`;
         }
 
+        let mealType;
         function checking(event) 
         {
             const forbfChecked = document.getElementById('forbf').checked;
             const forLunchChecked = document.getElementById('forlunch').checked;
             const forDinnerChecked = document.getElementById('fordinner').checked;
 
-            let mealType;
+            
 
             if (forbfChecked && forLunchChecked && forDinnerChecked) {
                 mealType = 'all';
@@ -688,7 +689,9 @@
                         <label class="check-label" for='f2'><input type="checkbox" class="year-filter" value="II" id='f2'> II</label>
                         <label class="check-label" for='f3'><input type="checkbox" class="year-filter" value="III" id='f3'> III</label>
                         <label class="check-label" for='f4'><input type="checkbox" class="year-filter" value="IV" id='f4'> IV</label>
-                    <table id="sampleTable">
+                    <hr>
+                    <h3> Table For ${mealType}       </h3>
+                        <table id="sampleTable">
                         <thead>
                             <tr>
                                 <th>ID</th>
@@ -696,6 +699,7 @@
                                 <th>Phone</th>
                                 <th>Year</th>
                                 <th>Dept</th>
+                                <th>Reason</th>
                                 <th>Date</th>
                             </tr>
                         </thead>
@@ -708,6 +712,7 @@
                             <td>${item.phone}</td>
                             <td>${item.year}</td>
                             <td>${item.dept}</td>
+                            <td>${item.reason}</td>
                             <td>${getTomorrowsDateinAdmine()}</td>
                         </tr>`;
                     id=id+1;
