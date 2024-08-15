@@ -143,29 +143,62 @@ app.post('/check-absent', (req, res) => {
     
         switch (meal) {
             case 'breakfast':
-                query = 'SELECT name, phone, year, dept FROM Profile WHERE bf = 0';
+                query = `
+                    SELECT name, phone, year, dept, bfreason AS reason
+                    FROM Profile
+                    WHERE bf = 0
+                `;
                 break;
             case 'lunch':
-                query = 'SELECT name, phone, year, dept FROM Profile WHERE lunch = 0';
+                query = `
+                    SELECT name, phone, year, dept, lreason AS reason
+                    FROM Profile
+                    WHERE lunch = 0
+                `;
                 break;
             case 'dinner':
-                query = 'SELECT name, phone, year, dept FROM Profile WHERE dinner = 0';
+                query = `
+                    SELECT name, phone, year, dept, dreason AS reason
+                    FROM Profile
+                    WHERE dinner = 0
+                `;
                 break;
             case 'breakfast_and_lunch':
-                query = 'SELECT name, phone, year, dept FROM Profile WHERE bf = 0 AND lunch = 0';
+                query = `
+                    SELECT name, phone, year, dept, 
+                        CONCAT(bfreason, ', ', lreason) AS reason
+                    FROM Profile
+                    WHERE bf = 0 AND lunch = 0
+                `;
                 break;
             case 'breakfast_and_dinner':
-                query = 'SELECT name, phone, year, dept FROM Profile WHERE bf = 0 AND dinner = 0';
+                query = `
+                    SELECT name, phone, year, dept, 
+                        CONCAT(bfreason, ', ', dreason) AS reason
+                    FROM Profile
+                    WHERE bf = 0 AND dinner = 0
+                `;
                 break;
             case 'lunch_and_dinner':
-                query = 'SELECT name, phone, year, dept FROM Profile WHERE lunch = 0 AND dinner = 0';
+                query = `
+                    SELECT name, phone, year, dept, 
+                        CONCAT(lreason, ', ', dreason) AS reason
+                    FROM Profile
+                    WHERE lunch = 0 AND dinner = 0
+                `;
                 break;
             case 'all':
-                query = 'SELECT name, phone, year, dept FROM Profile WHERE bf = 0 AND lunch = 0 AND dinner = 0';
+                query = `
+                    SELECT name, phone, year, dept, 
+                        CONCAT(bfreason, ', ', lreason, ', ', dreason) AS reason
+                    FROM Profile
+                    WHERE bf = 0 AND lunch = 0 AND dinner = 0
+                `;
                 break;
             default:
                 return res.status(400).json({ error: 'Invalid meal type' });
         }
+        
     
         db.query(query, (error, results) => {
             if (error) {
@@ -192,29 +225,62 @@ app.post('/Tcheck-absent', (req, res) => {
     
         switch (meal) {
             case 'breakfast':
-                query = 'SELECT name, phone, year, dept FROM Profile WHERE Tbf = 0';
+                query = `
+                    SELECT name, phone, year, dept, Tbfreason AS reason
+                    FROM Profile
+                    WHERE Tbf = 0
+                `;
                 break;
             case 'lunch':
-                query = 'SELECT name, phone, year, dept FROM Profile WHERE Tlunch = 0';
+                query = `
+                    SELECT name, phone, year, dept, Tlreason AS reason
+                    FROM Profile
+                    WHERE Tlunch = 0
+                `;
                 break;
             case 'dinner':
-                query = 'SELECT name, phone, year, dept FROM Profile WHERE Tdinner = 0';
+                query = `
+                    SELECT name, phone, year, dept, Tdreason AS reason
+                    FROM Profile
+                    WHERE Tdinner = 0
+                `;
                 break;
             case 'breakfast_and_lunch':
-                query = 'SELECT name, phone, year, dept FROM Profile WHERE Tbf = 0 AND Tlunch = 0';
+                query = `
+                    SELECT name, phone, year, dept, 
+                        CONCAT(Tbfreason, ', ', Tlreason) AS reason
+                    FROM Profile
+                    WHERE Tbf = 0 AND Tlunch = 0
+                `;
                 break;
             case 'breakfast_and_dinner':
-                query = 'SELECT name, phone, year, dept FROM Profile WHERE Tbf = 0 AND Tdinner = 0';
+                query = `
+                    SELECT name, phone, year, dept, 
+                        CONCAT(Tbfreason, ', ', Tdreason) AS reason
+                    FROM Profile
+                    WHERE Tbf = 0 AND Tdinner = 0
+                `;
                 break;
             case 'lunch_and_dinner':
-                query = 'SELECT name, phone, year, dept FROM Profile WHERE Tlunch = 0 AND Tdinner = 0';
+                query = `
+                    SELECT name, phone, year, dept, 
+                        CONCAT(Tlreason, ', ', Tdreason) AS reason
+                    FROM Profile
+                    WHERE Tlunch = 0 AND Tdinner = 0
+                `;
                 break;
             case 'all':
-                query = 'SELECT name, phone, year, dept FROM Profile WHERE Tbf = 0 AND Tlunch = 0 AND Tdinner = 0';
+                query = `
+                    SELECT name, phone, year, dept, 
+                        CONCAT(Tbfreason, ', ', Tlreason, ', ', Tdreason) AS reason
+                    FROM Profile
+                    WHERE Tbf = 0 AND Tlunch = 0 AND Tdinner = 0
+                `;
                 break;
             default:
                 return res.status(400).json({ error: 'Invalid meal type' });
         }
+        
     
         db.query(query, (error, results) => {
             if (error) {
