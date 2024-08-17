@@ -321,7 +321,23 @@ app.post('/signup', (req, res) => {
                     return res.status(500).send('Server error');
                 }
                 console.log('User is added');
-                return res.status(200).json({ message: 'User is added', redirect: '/login.html' });
+                
+
+                const insertLogbookQuery = `
+                    INSERT INTO logbook (userid, password, phone_number) 
+                    VALUES (?, ?, ?)
+                `;
+                
+                db.query(insertLogbookQuery, [email, password, phone], (err, results) => {
+                    if (err) {
+                        console.error('Database insert error in logbook:', err);
+                        return res.status(500).send('Server error');
+                    }
+
+                    return res.status(200).json({ message: 'User is added', redirect: '/login.html' });
+                });
+
+                
             });
         });
     } catch (error) {
@@ -488,6 +504,50 @@ app.post('/make-admin', (req, res) => {
     
 });
 
+// Food Data
+app.get('/fooddata', (req, res) => {
+    try{
+        if (!req.session.user.username) {
+        return res.status(404).json({redirect: '/login', message: 'Please log in first'}); 
+        // Redirect to login page if not logged in
+    }
+    const query = 'SELECT * FROM FoodData ORDER BY id DESC LIMIT 1;';
+
+    db.query(query, (err, results) => {
+        if (err) {
+            return res.status(500).send('Server error');
+        }
+
+        res.json(results[0]);
+    });
+    }catch (error) {
+            console.error('Error in choose-food route:', error);
+            res.status(500).send('Internal Server Error');
+        }
+    
+});
+// Endpoint to handle form data submission
+app.post('/writedata', (req, res) => {
+    
+    const { databf, datalunch, datadinner, date } = req.body;
+
+    // SQL query to insert data into FoodData table
+    const query = `
+        INSERT INTO FoodData (bf, lunch, dinner,date)
+        VALUES (?, ?, ?,?)
+    `;
+
+    // Execute SQL query
+    db.query(query, [databf, datalunch, datadinner,date], (err, results) => {
+        if (err) {
+            console.error('Error inserting data:', err);
+            return res.status(500).json({ message: 'Failed to save data.' });
+        }
+
+        // Send a success response
+        res.status(200).json({ message: 'Data saved successfully!' });
+    });
+});
 
 // Admin-main page endpoint
 app.get('/admin-main-data', (req, res) => {
@@ -681,6 +741,128 @@ app.post('/checkpassword', (req, res) => {
         }
     });
 });
+
+
+
+function formaldate(date = new Date()) {
+    const day = String(date.getDate()).padStart(2, '0');
+    const month = String(date.getMonth() + 1).padStart(2, '0'); // Months are zero-based in JS
+    const year = date.getFullYear();
+
+    return `${day}-${month}-${year}`;
+}
+// checking for upload
+app.get('/checkdate', (req, res) => {
+    const currentDate = formaldate();
+
+    // Query the latest date from FoodData table
+    db.query('SELECT date FROM FoodData ORDER BY id DESC LIMIT 1', (err, results) => {
+        if (err) throw err;
+
+        const lastRecordDate = results.length > 0 ? results[0].date : null;
+        
+        if (lastRecordDate === currentDate) {
+            // If dates are the same, send update_date
+            db.query('SELECT updated_at FROM History ORDER BY id DESC LIMIT 1', (err, results) => {
+                if (err) throw err;
+                const updateDate = results[0]?.updated_at;
+                console.log('Last updated_at value:', updateDate || 'No records found');
+                res.json({ message: `Last upload on ${updateDate}` });
+            });
+            
+            
+            
+        } 
+        else 
+        {
+            // If dates are different, perform insert and update operations
+            db.query('SELECT * FROM FoodData ORDER BY id DESC LIMIT 1', (err, foodData) => {
+                if (err) throw err;
+
+                if (foodData.length > 0) {
+                    // Extract data for the new entry
+                    const { lunch, dinner, bf } = foodData[0];
+                    const newData = {
+                        lunch,
+                        dinner,
+                        bf,
+                        date: currentDate
+                    };
+
+                    // Insert new data with current date
+                    db.query('INSERT INTO FoodData (lunch, dinner, bf, date) VALUES (?, ?, ?, ?)', 
+                        [newData.lunch, newData.dinner, newData.bf, newData.date], (err) => {
+                        if (err) throw err;
+
+                        // Retrieve user_id, lunch, dinner, and bf from the Profile table
+                        db.query('SELECT user_id, lunch, dinner, bf FROM Profile', (err, profileData) => {
+                            if (err) throw err;
+
+                            if (profileData.length > 0) {
+                                // Loop through each profile entry
+                                // profileData.forEach(profile => {
+                                //     const historyData = {
+                                //         user_id: profile.user_id,
+                                //         lunch: profile.lunch,
+                                //         dinner: profile.dinner,
+                                //         bf: profile.bf,
+                                //         date: currentDate
+                                //     };
+
+                                //     // Insert into History table
+                                //     db.query('INSERT INTO History (userid, lunch, dinner, bf, date) VALUES (?, ?, ?, ?, ?)', [historyData.user_id, historyData.lunch, historyData.dinner, historyData.bf, historyData.date], (err) => {
+                                //         if (err) throw err;
+                                //     });
+                                    
+                                // }); 
+                                // console.log("****************history table data is stored*******************");
+
+                                const query = `
+                                    INSERT INTO History (userid, lunch, dinner, bf, date)
+                                    SELECT user_id, lunch, dinner, bf, ? FROM Profile;
+                                `;
+
+                                db.query(query, [currentDate], (err, results) => {
+                                    if (err) throw err;
+                                    console.log('History table data is stored');
+                                });
+
+                            }
+                            else {
+                                res.json({ message: 'No profile data found' });
+                            }
+
+                        });
+
+
+
+                        // Update Profile table
+                        const updateQuery = `
+                        UPDATE Profile 
+                        SET bf = Tbf, lunch = Tlunch, dinner = Tdinner,
+                            bfreason = Tbfreason, lreason = Tlreason, dreason = Tdreason,
+                            Tbf = DEFAULT, Tlunch = DEFAULT, Tdinner = DEFAULT,
+                            Tbfreason = DEFAULT, Tlreason = DEFAULT, Tdreason = DEFAULT
+                        `;
+
+                        db.query(updateQuery, (err) => {
+                            if (err) throw err;
+                            res.json({ message: 'You are the first user' });
+                        });
+                        console.log("****************Profile table data is updated*******************");
+
+                    });
+                } else {
+                    res.json({ message: 'No data found in FoodData table' });
+                }
+            });
+        }
+    });
+
+
+});
+
+
 
 
 
