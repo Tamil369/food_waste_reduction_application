@@ -90,6 +90,71 @@
         }
 
 
+        body{
+            font-family:'Times New Roman', Times, serif;
+        }
+
+        #notifyBtn {
+            padding: 10px 20px;
+            background-color: #007BFF;
+            color: white;
+            border: none;
+            cursor: pointer;
+            margin: 50px;
+        }
+
+        #notification {
+            display: none;
+            position: fixed;
+            left: -400px; /* Start off-screen */
+            top: 10%;
+            background-color: rgb(130, 237, 91);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+            z-index: 1000;
+            width: 300px;
+            height: auto;
+            transition: left 1s ease-in-out; /* Smooth slide-in transition */
+        }
+
+        .popup-content {
+            padding: 20px;
+            text-align: center;
+            position: relative;
+            border: 5px dashed transparent;
+        }
+
+        .close {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            font-size: 24px;
+            cursor: pointer;
+        }
+
+        /* Smooth running border animation */
+        .running-border {
+            animation: borderRunSmooth 5s linear infinite;
+        }
+
+        @keyframes borderRunSmooth {
+            0% {
+                border-color: #06ebf7 transparent transparent transparent;
+            }
+            25% {
+                border-color: #06ebf7 #06ebf7 transparent transparent;
+            }
+            50% {
+                border-color: #06ebf7 #06ebf7 #06ebf7 transparent;
+            }
+            75% {
+                border-color: #06ebf7 #06ebf7 r#06ebf7ed #06ebf7;
+            }
+            100% {
+                border-color: #06ebf7 #06ebf7 #06ebf7 #06ebf7;
+            }
+        }
+
+
 
 
 
@@ -174,6 +239,16 @@
             </form>
         </div>
     </div>
+
+
+    <!-- <button id="notifyBtn" onclick="popup('hi everyone')">Show Notification</button> -->
+
+    <div id="notification" class="popup">
+        <div class="popup-content" id="popupContent">
+            <span class="close">&times;</span>
+            <p id="popup">This is dsfon!</p>
+        </div>
+    </div>
     
 
 
@@ -219,65 +294,76 @@
                     alert(error['message']);
                 });
             });
+
+            // data upload
+            fetch('/checkdate')
+            .then(response => response.json())
+            .then(data => {
+                if (data.message) {
+                    popup(data.message); // Use your popup function to display the message
+                }
+            })
+            .catch( );
+
+
+
         
-            // try {
-            //     const response = await fetch('/login', {
-            //         method: 'POST',
-            //         headers: {
-            //             'Content-Type': 'application/json'
-            //         },
-            //         body: JSON.stringify({ username, password })
-            //     });
-
-            //     if (!response.ok) {
-            //         const errorText = await response.text();
-            //         throw new Error(errorText);
-                    
-            //     }
-            //     else
-            //     {
-            //         document.getElementById('message').textContent = 'Error: ' + 'responce ok';
-            //         document.getElementById('message').style.color = 'green';
-            //     }
-
-            //     const data = await response.json();
-                
-            //     window.location.href = data.redirect;
-            // } catch (error) {
-            //     document.getElementById('message').textContent = 'Error: ' + error.message;
-            //     document.getElementById('message').style.color = 'red';
-            // }
         });
-        // document.addEventListener('DOMContentLoaded', function() {
-        //     const loginForm = document.getElementById('login-form');
-        //     loginForm.addEventListener('submit', function(event) {
-        //         event.preventDefault();
 
-        //         const username = document.getElementById('username').value;
-        //         const password = document.getElementById('password').value;
+        const pop =document.getElementById('popup');
+        // pop.textContent='hi eversdfdfsdyone';
+        function popup(txt) 
+        {
+            pop.textContent=txt;
+            const notification = document.getElementById("notification");
+            const popupContent = document.getElementById("popupContent");
+            
+            notification.style.display = "block";
 
-        //         try {
-        //             const response = fetch('/login', {
-        //                 method: 'POST',
-        //                 headers: {
-        //                     'Content-Type': 'application/json'
-        //                 },
-        //                 body: JSON.stringify({ username, password })
-        //             });
+            // Force reflow to apply the initial left position
+            notification.offsetHeight;
+            
+            notification.style.left = "20%"; // Trigger the animation
 
-        //             if (!response.ok) {
-        //                 const errorText =  response.message;
-        //                 throw new Error(errorText);
-        //             }
+            // Add running border animation
+            popupContent.classList.add("running-border");
 
-        //             const data =  response.json();
-        //             window.location.href = data.redirect;
-        //         } catch (error) {
-        //             document.getElementById('message').textContent = 'Error: ' + error.message;
-        //             document.getElementById('message').style.color = 'red';
-        //         }
-        //     });
-        // });
+            // Hide the notification after 5 seconds
+            setTimeout(function() {
+                notification.style.left = "-300px"; // Move it back out
+                setTimeout(function() {
+                    notification.style.display = "none";
+                    popupContent.classList.remove("running-border"); // Remove running border
+                }, 1000); // Match the transition duration to hide after sliding out
+            }, 7000);
+        };
+
+        document.querySelector(".close").onclick = function() {
+            const notification = document.getElementById("notification");
+            const popupContent = document.getElementById("popupContent");
+
+            notification.style.left = "-400px"; // Move it back out
+            setTimeout(function() {
+                notification.style.display = "none";
+                popupContent.classList.remove("running-border"); // Remove running border
+            }, 1000); // Match the transition duration to hide after sliding out
+        };
+
+        window.onclick = function(event) {
+            const notification = document.getElementById("notification");
+            const popupContent = document.getElementById("popupContent");
+
+            if (event.target == notification) {
+                notification.style.left = "-300px"; // Move it back out
+                setTimeout(function() {
+                    notification.style.display = "none";
+                    popupContent.classList.remove("running-border"); // Remove running border
+                }, 1000); // Match the transition duration to hide after sliding out
+            }
+        };
+        
+
+
 
 
 

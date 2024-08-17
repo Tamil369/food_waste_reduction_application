@@ -255,6 +255,84 @@
         
 
 
+        #doverlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.7);
+            display: none;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+        }
+
+        #doverlay-content {
+            background-color: white;
+            padding: 20px;
+            border-radius: 5px;
+            width: 300px;
+        }
+
+        .form-group {
+            margin-bottom: 15px;
+        }
+
+        #doverlay-contentlabel {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+        }
+
+        #doverlay-content input[type="text"] {
+            width: 100%;
+            padding: 8px;
+            box-sizing: border-box;
+            border: 5px double rgb(149, 230, 230);
+        }
+
+        
+
+        
+        #doverlay-content label
+        {
+            font-weight: bold;
+        }
+
+        /* Close Button */
+        #dcloseOverlay {
+            background-color: #dc3545;
+            color: white;
+            padding: 8px 16px;
+            border: none;
+            cursor: pointer;
+            margin-top: 15px;
+        }
+
+        #dcloseOverlay:hover {
+            background-color: #c82333;
+        }
+        #dataButton {
+            padding: 10px 20px;
+            background-color: #69e1db;
+            color: rgb(0, 0, 0);
+            border: none;
+            cursor: pointer;
+            position: fixed;
+            bottom: 10px;
+            border-radius: 10%;
+            left: 5%;
+            transition: background-color 0.3s ease, border 0.3s ease;
+        }
+
+        #dataButton:hover {
+            border: 5px double  #ff0000;
+            background-color: #11ff00;
+        }
+
+
+
          
 
 
@@ -444,7 +522,32 @@
     <div id="dmessage" style="display: none;">I ordered my Dinner</div>
 
 
+    <div id="doverlay">
+        <div id="doverlay-content">
+            <h2>Meal Data Form</h2>
+            <form>
+                
+                <div class="form-group">
+                    <label for="datalunch">Lunch Data</label>
+                    <input type="text" id="datalunch" name="datalunch" placeholder="Enter lunch data" disabled required>
+                </div>
+
+                <div class="form-group">
+                    <label for="datadinner">Dinner Data</label>
+                    <input type="text" id="datadinner" name="datadinner" placeholder="Enter dinner data" disabled required>
+                </div>
+                <div class="form-group">
+                    <label for="databf">Breakfast Data</label>
+                    <input type="text" id="databf" name="databf" placeholder="Enter breakfast data" disabled required>
+                </div>
+
+                
+            </form>
+            <button id="dcloseOverlay">Close</button>
+        </div>
+    </div>
     
+    <button id="dataButton">Show Data Form</button>
 
 
 
@@ -673,6 +776,40 @@
         functiontoSetSelectedValues();
         updateFormVisibility();
         setInterval(updateFormVisibility, 60000); // Check every minute
+
+
+        const dataButton = document.getElementById('dataButton');
+            const overlay = document.getElementById('doverlay');
+            const closeOverlay = document.getElementById('dcloseOverlay');
+            const changeButton = document.getElementById('changeButton');
+            const saveButton = document.getElementById('saveButton');
+            const inputs = document.querySelectorAll('#doverlay input[type="text"]');
+            const dl = document.getElementById('datalunch');
+            const dd = document.getElementById('datadinner');
+            const dbf = document.getElementById('databf');
+
+            fetch('/fooddata')
+            .then(response => response.json())
+            .then(data => {
+                dl.value=data.lunch;
+                dd.value=data.dinner;
+                dbf.value=data.bf;
+                
+            })
+            .catch(error => {
+                console.error('Error fetching admin data:', error);
+                
+            });
+
+
+            
+            dataButton.addEventListener('click', function() {
+                overlay.style.display = 'flex';
+            });
+
+            closeOverlay.addEventListener('click', function() {
+                overlay.style.display = 'none';
+            });
 
 
         document.getElementById('choose-food-form').addEventListener('submit', function(event) {
