@@ -450,6 +450,25 @@
         #dcloseOverlay:hover {
             background-color: #c82333;
         }
+
+        #qrCode {
+            margin-top: 10px;
+            width: 192px;
+            height: 192px;
+        }
+        .qr {
+            margin: 10px auto;
+            display: inline-block;
+            border: 5px solid rgb(93, 190, 203);
+            padding: 10px;
+            display: none;
+        }
+
+        .labforp
+        {
+            display: block;
+            margin: 5px auto;
+        }
   
         
 
@@ -499,7 +518,7 @@
                     <li class="nav-item">
                         <a class="nav-link" href="#" onclick="showProfileOverlay(event)">
                             Profile 
-                            </a>
+                        </a>
 
                     </li>
                     <li class="nav-item">
@@ -590,17 +609,17 @@
             <h2>Your Profile</h2>
             <hr> 
             <span class="closebtn" onclick="closeProfileOverlay()">&times;</span>
-            <p id="profileName"></p>
-            <p id="profileUserId"></p>
-            <p id="profileRegNo"></p>
-            <p id="profilePhone"></p>
-            <p id="profilebf"></p>
-            <p id="profileLunch"></p>
-            <p id="profileDinner"></p>
+            <label class="labforp">Name:<p id="profileName" style="display: inline; margin: 0;"></p></label>
+            <label class="labforp">User ID:<p id="profileUserId" style="display: inline; margin: 0;"></p></label>
+            <label class="labforp">Reg No:<p id="profileRegNo" style="display: inline; margin: 0;"></p></label>
+            <label class="labforp">Phone:<p id="profilePhone" style="display: inline; margin: 0;"></p></label>
+            <label class="labforp">BreakFast :<p id="profilebf" style="display: inline; margin: 0;"></p></label>
+            <label class="labforp">Lunch :<p id="profileLunch" style="display: inline; margin: 0;"></p></label>
+            <label class="labforp">Dinner :<p id="profileDinner" style="display: inline; margin: 0;"></p></label>
             <button type="button" class="btn btn-outline-info" onclick="QRCODE(event)"> Show QR </button>
                         
             <div class="qr" >
-                <div id="qrCode" ></div>
+                <div id="qrCode"></div>
             </div>
 
         </div>
@@ -701,16 +720,28 @@
         function QRCODE(e)
         {
             e.preventDefault(); // Prevent form from submitting the traditional way
+            document.getElementsByClassName('qr')[0].style.display = 'block';
+            const profileData = {
+                name: document.getElementById('profileName').textContent,
+                userId: document.getElementById('profileUserId').textContent,
+                regNo: document.getElementById('profileRegNo').textContent,
+                phone: document.getElementById('profilePhone').textContent,
+                bf: document.getElementById('profilebf').textContent,
+                lunch: document.getElementById('profileLunch').textContent,
+                dinner: document.getElementById('profileDinner').textContent
+            };
 
-            const number = "https://food-waste-reduction-application.onrender.com";
+            // Clear any previous QR code
+            document.getElementById('qrCode').innerHTML = '';
 
-            if (number) {
-                // Clear any previous QR code
-                document.getElementById('qrCode').innerHTML = '';
-                document.getElementById('qrCode').style.display='block';
-                // Generate the QR code
-                new QRCode(document.getElementById('qrCode'), number);
-            }
+            // Generate the QR code with the specified size (192x192)
+            new QRCode(document.getElementById('qrCode'), {
+                text: JSON.stringify(profileData),
+                width: 192,
+                height: 192
+            });
+            
+            
         }
 
 
@@ -1032,13 +1063,20 @@
                     window.location.href = './login.html';
                 } else {
                     // Populate the overlay with profile data
-                    document.getElementById('profileName').textContent = `Name: ${data.name}`;
-                    document.getElementById('profileUserId').textContent = `User ID: ${data.user_id}`;
-                    document.getElementById('profileRegNo').textContent = `Reg No: ${data.reg_no}`;
-                    document.getElementById('profilePhone').textContent = `Phone: ${data.phone}`;
-                    document.getElementById('profileLunch').textContent = `Lunch: ${data.lunch}`;
-                    document.getElementById('profileDinner').textContent = `Dinner: ${data.dinner}`;
-                    document.getElementById('profilebf').textContent = `Break Fast: ${data.bf}`;
+                    // document.getElementById('profileName').textContent = `Name: ${data.name}`;
+                    // document.getElementById('profileUserId').textContent = `User ID: ${data.user_id}`;
+                    // document.getElementById('profileRegNo').textContent = `Reg No: ${data.reg_no}`;
+                    // document.getElementById('profilePhone').textContent = `Phone: ${data.phone}`;
+                    // document.getElementById('profileLunch').textContent = `Lunch: ${data.lunch}`;
+                    // document.getElementById('profileDinner').textContent = `Dinner: ${data.dinner}`;
+                    // document.getElementById('profilebf').textContent = `Break Fast: ${data.bf}`;
+                    document.getElementById('profileName').textContent = ` ${data.name}`;
+                    document.getElementById('profileUserId').textContent = ` ${data.user_id}`;
+                    document.getElementById('profileRegNo').textContent = `${data.reg_no}`;
+                    document.getElementById('profilePhone').textContent = `${data.phone}`;
+                    document.getElementById('profileLunch').textContent = ` ${data.lunch}`;
+                    document.getElementById('profileDinner').textContent = ` ${data.dinner}`;
+                    document.getElementById('profilebf').textContent = ` ${data.bf}`;
                     // Show the profile overlay
                 }
             })
@@ -1051,6 +1089,7 @@
         function closeProfileOverlay() {
             document.getElementById('profileOverlay').style.display = 'none'; // Hide the profile overlay
             document.getElementById('qrCode').innerHTML = '';
+            document.getElementsByClassName('qr')[0].style.display = 'none';
         }
 
         // Open upload overlay
