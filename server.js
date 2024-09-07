@@ -146,21 +146,21 @@ app.post('/check-absent', (req, res) => {
                 query = `
                     SELECT name, phone, year, dept, bfreason AS reason
                     FROM Profile
-                    WHERE bf = 0
+                    WHERE abf = 0
                 `;
                 break;
             case 'lunch':
                 query = `
                     SELECT name, phone, year, dept, lreason AS reason
                     FROM Profile
-                    WHERE lunch = 0
+                    WHERE al = 0
                 `;
                 break;
             case 'dinner':
                 query = `
                     SELECT name, phone, year, dept, dreason AS reason
                     FROM Profile
-                    WHERE dinner = 0
+                    WHERE ad = 0
                 `;
                 break;
             case 'breakfast_and_lunch':
@@ -168,7 +168,7 @@ app.post('/check-absent', (req, res) => {
                     SELECT name, phone, year, dept, 
                         CONCAT(bfreason, ', ', lreason) AS reason
                     FROM Profile
-                    WHERE bf = 0 AND lunch = 0
+                    WHERE abf = 0 AND al = 0
                 `;
                 break;
             case 'breakfast_and_dinner':
@@ -176,7 +176,7 @@ app.post('/check-absent', (req, res) => {
                     SELECT name, phone, year, dept, 
                         CONCAT(bfreason, ', ', dreason) AS reason
                     FROM Profile
-                    WHERE bf = 0 AND dinner = 0
+                    WHERE abf = 0 AND ad = 0
                 `;
                 break;
             case 'lunch_and_dinner':
@@ -184,7 +184,7 @@ app.post('/check-absent', (req, res) => {
                     SELECT name, phone, year, dept, 
                         CONCAT(lreason, ', ', dreason) AS reason
                     FROM Profile
-                    WHERE lunch = 0 AND dinner = 0
+                    WHERE al = 0 AND ad = 0
                 `;
                 break;
             case 'all':
@@ -192,7 +192,7 @@ app.post('/check-absent', (req, res) => {
                     SELECT name, phone, year, dept, 
                         CONCAT(bfreason, ', ', lreason, ', ', dreason) AS reason
                     FROM Profile
-                    WHERE bf = 0 AND lunch = 0 AND dinner = 0
+                    WHERE abf = 0 AND al = 0 AND ad = 0
                 `;
                 break;
             default:
