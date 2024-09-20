@@ -7,7 +7,7 @@ const path = require('path'); // Import the 'path' module
 
 
 const app = express();
-const port = 3000;
+const port = 3011;
 
 const cron = require('node-cron');
 
@@ -818,8 +818,8 @@ app.get('/checkdate', (req, res) => {
                                 // console.log("****************history table data is stored*******************");
 
                                 const query = `
-                                    INSERT INTO History (userid, lunch, dinner, bf, date)
-                                    SELECT user_id, lunch, dinner, bf, ? FROM Profile;
+                                    INSERT INTO History (al, ad, abf, userid, lunch, dinner, bf, date)
+                                    SELECT al, ad, abf, user_id, lunch, dinner, bf, ? FROM Profile;
                                 `;
 
                                 db.query(query, [currentDate], (err, results) => {
@@ -842,7 +842,8 @@ app.get('/checkdate', (req, res) => {
                         SET bf = Tbf, lunch = Tlunch, dinner = Tdinner,
                             bfreason = Tbfreason, lreason = Tlreason, dreason = Tdreason,
                             Tbf = DEFAULT, Tlunch = DEFAULT, Tdinner = DEFAULT,
-                            Tbfreason = DEFAULT, Tlreason = DEFAULT, Tdreason = DEFAULT
+                            Tbfreason = DEFAULT, Tlreason = DEFAULT, Tdreason = DEFAULT,
+                            al = DEFAULT, abf = DEFAULT, ad = DEFAULT
                         `;
 
                         db.query(updateQuery, (err) => {
@@ -863,6 +864,161 @@ app.get('/checkdate', (req, res) => {
 });
 
 
+app.post('/getProfilescan', (req, res) => {
+    try {
+        // Check if the user is logged in
+        // console.log("inside a scnner")
+        if (!req.session.user ||!req.session.user.username) {
+            return res.status(404).json({ redirect: '/login', message: 'Please log in first' });
+        }
+
+        const { id } = req.body; // Get id from the request body
+
+        // SQL query to get profile data
+        const sql = 'SELECT name, bf, lunch, dinner, bfreason, lreason, dreason FROM Profile WHERE id = ?';
+
+        // Execute the query
+        db.query(sql, [id], (err, result) => {
+            if (err) {
+                // Return an error if there was a problem with the query
+                return res.status(500).json({ error: 'Database error' });
+            }
+            if (result.length === 0) {
+                // Return an error if the profile was not found
+                return res.status(404).json({ error: 'Profile not found' });
+            }
+            // Send back the profile data as JSON
+            res.json(result[0]);
+        });
+
+    } catch (error) {
+        // Handle any unexpected errors
+        console.error("Error in fetching profile:", error);
+        res.status(500).json({ error: 'Internal server error' });
+    }
+});
+
+// Route to mark attendance
+app.post('/markAttendance', (req, res) => {
+    const { id, breakfastChecked, lunchChecked, dinnerChecked } = req.body;
+
+    // Ensure the user is logged in (if applicable)
+    if (!req.session.user || !req.session.user.username) {
+        return res.status(404).json({ redirect: '/login', message: 'Please log in first' });
+    }
+
+    // Convert checkbox states to 1 or 0
+    const breakfast = breakfastChecked ? 1 : 0;
+    const lunch = lunchChecked ? 1 : 0;
+    const dinner = dinnerChecked ? 1 : 0;
+
+    let sql = 'UPDATE Profile SET ';
+    const updates = [];
+    
+    console.log("*******SCANNER********");
+
+    // // Add corresponding updates based on checked values
+    // if (breakfast==1) {
+    //     updates.push('abf = 1');
+    //     sql+=' abf = 1';
+    // } 
+    // if (lunch==1) {
+    //     updates.push('al = 1');
+    //     sql+=' al = 1';
+    // } 
+    // if (dinner==1) {
+    //     updates.push('ad = 1');
+    //     sql+=' ad = 1';
+    // }
+
+    // if (breakfast===0 && lunch===0 && dinner===0) {
+    //     sql += ' abf = 0, al = 0, ad = 0 ' ;
+    // }
+    
+
+    // sql += ' WHERE id = ?';
+    
+
+    // 8 possibilities for breakfast, lunch, and dinner
+    if (breakfast === 1 && lunch === 1 && dinner === 1) {
+        sql += 'abf = 1, al = 1, ad = 1';
+    } else if (breakfast === 1 && lunch === 1 && dinner === 0) {
+        sql += 'abf = 1, al = 1';
+    } else if (breakfast === 1 && lunch === 0 && dinner === 1) {
+        sql += 'abf = 1, ad = 1';
+    } else if (breakfast === 1 && lunch === 0 && dinner === 0) {
+        sql += 'abf = 1';
+    } else if (breakfast === 0 && lunch === 1 && dinner === 1) {
+        sql += ' al = 1, ad = 1';
+    } else if (breakfast === 0 && lunch === 1 && dinner === 0) {
+        sql += ' al = 1';
+    } else if (breakfast === 0 && lunch === 0 && dinner === 1) {
+        sql += ' ad = 1';
+    } else {
+        // All unchecked: breakfast === 0 && lunch === 0 && dinner === 0
+        sql += 'abf = 0, al = 0, ad = 0';
+    }
+
+    sql += ' WHERE id = ?';
+
+    
+
+    try {
+        // Execute the query
+        db.query(sql, [ id], (err, result) => {
+            if (err) {
+                console.error('Error updating profile:', err);
+                return res.status(500).json({ error: 'Database error' });
+            }
+
+            res.status(200).json({ success: true, message: 'Profile updated successfully. '+sql });
+        });
+    } catch (error) {
+        console.error('Unexpected error:', error);
+        res.status(500).json({ error: 'Unexpected error occurred' });
+    }
+});
+
+
+
+function checkingDBstatus()
+{
+    // let query = `
+    //     INSERT INTO History (userid, lunch, dinner, bf, date)
+    //     VALUES (?, ?, ?, ?, ?);
+    // `;
+
+    // // Assuming you're using a MySQL library like `mysql2` or `mysqljs/mysql`
+    // let values = ['sample@c', 1, 0.5, 1, '02-09-2024']; 
+
+    // // Example using mysql2
+    // db.query(query, values, (error, results) => {
+    //     if (error) {
+    //         console.error('Error executing query:', error);
+    //         return;
+    //     }
+    //     console.log('Record inserted in history table:', results);
+    // });
+
+
+    // let query = 'INSERT INTO FoodData (lunch, dinner, bf, date) VALUES (?, ?, ?, ?)';
+
+    // // Define the values to insert
+    //  values = [1, 0.5, 1, '01-09-2024']; // Date in YYYY-MM-DD format
+
+    // // Execute the query
+    // db.query(query, values, (error, results) => {
+    //     if (error) {
+    //         console.error('Error executing query:', error);
+    //         return;
+    //     }
+    //     console.log('FOOD data record is inserted:', results);
+    // });
+
+
+    
+    
+}
 
 
 
