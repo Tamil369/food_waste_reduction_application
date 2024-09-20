@@ -1,0 +1,297 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>QR Code Scanner (JSON)</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+            margin-top: 20px;
+        }
+        #video {
+            width: 100%;
+            max-width: 400px; /* Adjust this value for your design */
+            height: auto;
+            border: 2px solid black;
+            display: block;
+            margin: 0 auto;
+        }
+        #result {
+            margin-top: 20px;
+            font-size: 18px;
+            font-weight: bold;
+        }
+        #playButton {
+            display: none;
+            margin-top: 20px;
+            padding: 10px 20px;
+            background-color: #007bff;
+            color: white;
+            border: none;
+            cursor: pointer;
+            font-size: 16px;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        table, th, td {
+            border: 1px solid black;
+        }
+        th, td {
+            padding: 10px;
+            text-align: left;
+        }
+    </style>
+</head>
+<body>
+    <h1>QR Code Scanner </h1>
+    <video id="video" autoplay></video>
+    <div id="result">Scanning for QR code...</div>
+
+    <h1>Profile Information</h1>
+    <div id="profileContainer">
+        <!-- Table to display profile details -->
+        <table id="profileTable">
+            <thead>
+                <tr>
+                    <th>Name</th>
+                    <th>Breakfast</th>
+                    <th>Lunch</th>
+                    <th>Dinner</th>
+                    <th>Breakfast Reason</th>
+                    <th>Lunch Reason</th>
+                    <th>Dinner Reason</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td colspan="7">Loading...</td>
+                </tr>
+            </tbody>
+        </table>
+
+        <!-- Attendance Checkboxes -->
+        <div class="attendance-checkboxes" id="attendanceContainer">
+            <label><input type="checkbox" id="breakfastCheckbox"> Breakfast</label>
+            <label><input type="checkbox" id="lunchCheckbox"> Lunch</label>
+            <label><input type="checkbox" id="dinnerCheckbox"> Dinner</label>
+            <button id="markAttendanceButton">Mark Attendance</button>
+        </div>
+    </div>
+
+    <!-- Play Button Fallback for Mobile Devices -->
+    <button id="playButton">Start Scanning</button>
+
+    <script src="https://cdn.jsdelivr.net/npm/jsqr/dist/jsQR.js"></script>
+    <script>
+        const video = document.getElementById('video');
+        const resultElement = document.getElementById('result');
+        const playButton = document.getElementById('playButton');
+        let lastScanTime = 0;
+        const scanInterval = 500; // 500ms between scans
+
+        // Function to request camera access and stream video to the video element
+        function startVideo() {
+            if (navigator.mediaDevices && navigator.mediaDevices.getUserMedia) {
+                navigator.mediaDevices.getUserMedia({ video: { facingMode: 'environment' } })
+                    .then(stream => {
+                        video.srcObject = stream;
+                        video.play();
+                        playButton.style.display = 'none'; // Hide play button if video plays
+                    })
+                    .catch(err => {
+                        console.error("Error accessing camera: ", err);
+                        resultElement.textContent = "Error accessing camera. Please allow camera access.";
+                    });
+            } else {
+                resultElement.textContent = "Your device does not support camera access.";
+            }
+        }
+
+        // Function to display only the ID from the parsed JSON data
+        function displayIdFromJson(jsonData) {
+            if (jsonData.date==formaldate()  && jsonData.id) {
+                resultElement.textContent = `${jsonData.id}`;
+                fetchProfileData(resultElement.textContent);
+            } else {
+                if (jsonData.date!=formaldate())
+                {  alert("Scan New QR"); }
+                resultElement.textContent = "Invalid QR Code. No 'id' found. Expired QR code";
+            }
+        }
+        function formaldate(date = new Date()) {
+            const day = String(date.getDate()).padStart(2, '0');
+            const month = String(date.getMonth() + 1).padStart(2, '0'); // Months are zero-based in JS
+            const year = date.getFullYear();
+
+            return `${day}-${month}-${year}`;
+        }
+
+        // Continuously scan the video for QR codes
+        video.addEventListener('play', () => {
+            const canvas = document.createElement('canvas');
+            const context = canvas.getContext('2d');
+
+            const scan = () => {
+                const now = Date.now();
+                if (now - lastScanTime > scanInterval) {
+                    lastScanTime = now;
+                    if (video.readyState === video.HAVE_ENOUGH_DATA) {
+                        canvas.height = video.videoHeight;
+                        canvas.width = video.videoWidth;
+                        context.drawImage(video, 0, 0, canvas.width, canvas.height);
+
+                        const imageData = context.getImageData(0, 0, canvas.width, canvas.height);
+                        const code = jsQR(imageData.data, imageData.width, imageData.height);
+
+                        if (code) {
+                            try {
+                                // Parse the QR code data as JSON
+                                const jsonData = JSON.parse(code.data);
+
+                                // Display the 'id' field from the JSON data
+                                displayIdFromJson(jsonData);
+
+                            } catch (error) {
+                                resultElement.textContent = "Error: Invalid JSON data.";
+                            }
+
+                            // Pause the video when a QR code is detected
+                            video.pause();
+                        } else {
+                            resultElement.textContent = "Scanning for QR code...";
+                        }
+                    }
+                }
+                if (!video.paused) {
+                    requestAnimationFrame(scan);
+                }
+            };
+            scan();
+        });
+
+        // Play button fallback for mobile devices that do not autoplay video
+        playButton.addEventListener('click', () => {
+            video.play();
+            playButton.style.display = 'none'; // Hide button after pressing play
+        });
+
+        function fetchProfileData(id) {
+            console.log(id);
+                fetch('/getProfilescan', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ id: id }) // Send the ID in the request body
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.redirect) {
+                        // Redirect to login if the user is not logged in
+                        window.location.href = data.redirect;
+                        return;
+                    }
+
+                    // Update table with profile data
+                    const tableBody = document.querySelector("#profileTable tbody");
+                    tableBody.innerHTML = `
+                        <tr>
+                            <td>${data.name}</td>
+                            <td>${data.bf}</td>
+                            <td>${data.lunch}</td>
+                            <td>${data.dinner}</td>
+                            <td>${data.bfreason}</td>
+                            <td>${data.lreason}</td>
+                            <td>${data.dreason}</td>
+                        </tr>
+                    `;
+                })
+                .catch(error => {
+                    
+                    document.querySelector("#profileTable tbody").innerHTML = `
+                        <tr>
+                            <td colspan="7">Error loading profile data.</td>
+                        </tr>
+                    `;
+                });
+        }
+
+        // Function to display the profile data in the table
+        function displayProfile(profile) {
+            const tableBody = document.querySelector('#profileTable tbody');
+            tableBody.innerHTML = `
+                <tr>
+                    <td>${profile.name}</td>
+                    <td>${profile.bf}</td>
+                    <td>${profile.lunch}</td>
+                    <td>${profile.dinner}</td>
+                    <td>${profile.bfreason}</td>
+                    <td>${profile.lreason}</td>
+                    <td>${profile.dreason}</td>
+                </tr>
+            `;
+        }
+
+        markAttendanceButton.addEventListener('click', () => {
+            const id = resultElement.textContent.trim(); // Get the ID from the result element
+            if (isNaN(id)) {
+                alert('No profile ID detected. Please scan a QR code first.');
+                return;
+            }
+
+            // Prepare data for marking attendance
+            const attendanceData = {
+                id: id,
+                breakfast: breakfastCheckbox.checked,
+                lunch: lunchCheckbox.checked,
+                dinner: dinnerCheckbox.checked
+            };
+
+            fetch('/markAttendance', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(attendanceData)
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.redirect) {
+                        // Redirect to login if the user is not logged in
+                        window.location.href = data.redirect;
+                        return;
+                }
+
+                if (data.success) {
+                    alert(data.message);
+                    // Restart video playback
+                    startVideo();
+
+                // Reset the table to default state (loading message or empty rows)
+                const tableBody = document.querySelector("#profileTable tbody");
+                tableBody.innerHTML = `
+                    <tr>
+                        <td colspan="7">Loading...</td>
+                    </tr>
+                `;
+                resultElement.textContent = "Scanning for QR code...";
+                } else {
+                    alert('Error marking attendance.');
+                }
+            })
+            .catch(error => {
+                alert('Error: ' + error.message);
+            });
+        });
+
+
+        // Start the video on page load
+        startVideo();
+    </script>
+</body>
+</html>

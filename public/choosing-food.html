@@ -148,6 +148,7 @@
             display: flex;
             justify-content: center;
             align-items: center;
+            overflow-y: auto;
         }
 
         .overlay-content {
@@ -161,6 +162,7 @@
             top: 70px;
             left: 10%;
             right: 10%;
+            overflow-y: auto;
         }
 
         .closebtn {
@@ -524,6 +526,7 @@
                     <h2>Your Profile</h2>
                     <hr> 
                     <span class="closebtn" onclick="closeProfileOverlay()">&times;</span>
+                    <label class="labforp">id:<em>Gcefrc<p id="profileid" style="display: inline; margin: 0;"></p></em></label>
                     <label class="labforp">Name:<p id="profileName" style="display: inline; margin: 0;"></p></label>
                     <label class="labforp">User ID:<p id="profileUserId" style="display: inline; margin: 0;"></p></label>
                     <label class="labforp">Reg No:<p id="profileRegNo" style="display: inline; margin: 0;"></p></label>
@@ -531,6 +534,10 @@
                     <label class="labforp">BreakFast :<p id="profilebf" style="display: inline; margin: 0;"></p></label>
                     <label class="labforp">Lunch :<p id="profileLunch" style="display: inline; margin: 0;"></p></label>
                     <label class="labforp">Dinner :<p id="profileDinner" style="display: inline; margin: 0;"></p></label>
+                    <h3> Attendance Status:</h3>
+                    <label class="labforp">BreakFast:<p id="profileabf" style="display: inline; margin: 0;"></p></label>
+                    <label class="labforp">Lunch:<p id="profileal" style="display: inline; margin: 0;"></p></label>
+                    <label class="labforp">Dinner<p id="profilead" style="display: inline; margin: 0;"></p></label>
                     <button type="button" class="btn btn-outline-info" onclick="QRCODE(event)"> Show QR </button>
                                 
                     <div class="qr" >
@@ -959,6 +966,7 @@
                     window.location.href = './login.html';
                 } else {
                     // Populate the overlay with profile data
+                    document.getElementById('profileid').textContent = ` ${data.id}`;
                     document.getElementById('profileName').textContent = ` ${data.name}`;
                     document.getElementById('profileUserId').textContent = ` ${data.user_id}`;
                     document.getElementById('profileRegNo').textContent = `${data.reg_no}`;
@@ -966,7 +974,9 @@
                     document.getElementById('profileLunch').textContent = ` ${data.lunch}`;
                     document.getElementById('profileDinner').textContent = ` ${data.dinner}`;
                     document.getElementById('profilebf').textContent = ` ${data.bf}`;
-                    
+                    document.getElementById('profileabf').textContent = ` ${getAttendanceStatus(data.abf)}`;
+                    document.getElementById('profileal').textContent = ` ${getAttendanceStatus(data.al)}`;
+                    document.getElementById('profilead').textContent = ` ${getAttendanceStatus(data.ad)}`;
                     // Show the profile overlay
                 }
             })
@@ -1059,30 +1069,22 @@
             e.preventDefault(); // Prevent form from submitting the traditional way
             document.getElementsByClassName('qr')[0].style.display = 'block';
             const profileData = {
-                name: document.getElementById('profileName').textContent,
-                userId: document.getElementById('profileUserId').textContent,
-                regNo: document.getElementById('profileRegNo').textContent,
-                phone: document.getElementById('profilePhone').textContent,
-                bf: document.getElementById('profilebf').textContent,
-                lunch: document.getElementById('profileLunch').textContent,
-                dinner: document.getElementById('profileDinner').textContent,
+                id: document.getElementById('profileid').textContent,
                 date:formaldate()
             };
 
-            const secretKey = "GCE-Dharmapuri";
-            const encryptedData = CryptoJS.AES.encrypt(JSON.stringify(profileData), secretKey).toString();
-
             // Clear any previous QR code
             document.getElementById('qrCode').innerHTML = '';
+            console.log(profileData);
+            const profileDataStr = JSON.stringify(profileData);
 
             // Generate the QR code with the specified size (192x192)
             new QRCode(document.getElementById('qrCode'), {
-                text: encryptedData,
+                text: profileDataStr,
                 width: 192,
                 height: 192
             });
             
-            document.getElementsByClassName('qr')[0].style.display = 'block';
             
         }
 
@@ -1094,6 +1096,16 @@
             const year = date.getFullYear();
 
             return `${day}-${month}-${year}`;
+        }
+
+        function getAttendanceStatus(value) {
+            if (value === 1) {
+                return '✅Present'; 
+            } else if (value === 0) {
+                return '❌Absent'; 
+            } else {
+                return 'Invalid value'; 
+            }
         }
 
 
