@@ -900,17 +900,17 @@ app.post('/getProfilescan', (req, res) => {
 
 // Route to mark attendance
 app.post('/markAttendance', (req, res) => {
-    const { id, breakfastChecked, lunchChecked, dinnerChecked } = req.body;
+    // console.log("This is request body",req.body);
+    const { id, breakfast, lunch, dinner } = req.body;
 
     // Ensure the user is logged in (if applicable)
     if (!req.session.user || !req.session.user.username) {
-        return res.status(404).json({ redirect: '/login', message: 'Please log in first' });
+        return res.status(404).json({ redirect: '/login.html', message: 'Please log in first' });
     }
 
-    // Convert checkbox states to 1 or 0
-    const breakfast = breakfastChecked ? 1 : 0;
-    const lunch = lunchChecked ? 1 : 0;
-    const dinner = dinnerChecked ? 1 : 0;
+    
+
+    console.log(breakfast, lunch, dinner);
 
     let sql = 'UPDATE Profile SET ';
     const updates = [];
