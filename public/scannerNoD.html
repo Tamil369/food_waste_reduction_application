@@ -4,12 +4,50 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>QR Code Scanner (JSON)</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/crypto-js/4.1.1/crypto-js.min.js"></script>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
+    <link rel="stylesheet" href="./style.css">
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
+    
     <style>
-        body {
-            font-family: Arial, sans-serif;
+         body *
+        {
+            font-family: 'Times New Roman', Times, serif;
             text-align: center;
-            margin-top: 20px;
+            
         }
+        body
+        {
+            display: flex;
+            flex-direction: column;
+            
+        }
+        ul, ol, ls, li {
+            text-align: center;
+            padding-left: 0;
+        }
+        .my {
+            display: flex;
+            justify-content: space-between;
+            align-items: center; /* Vertically center align items */
+        }
+        .logo {
+            margin: 1% 3% 5% 2%;
+        }
+        .navbar-nav {
+            padding: 0 10px;
+        }
+        .dropdown-menu {
+            top: 100%;
+        }
+
+        .navbar-brand {
+            margin: 0 auto;
+            display: block; 
+        }
+
+
         #video {
             width: 100%;
             max-width: 400px; /* Adjust this value for your design */
@@ -34,54 +72,238 @@
             font-size: 16px;
         }
 
+        .table-container {
+            width: 100%;
+              /* Set the desired height */
+            /* overflow: auto;   */
+            border: 1px solid #ddd; /* Optional: add a border to the container */
+            
+            max-width: 100%;
+            overflow-x:scroll;
+        }
         table {
             width: 100%;
-            border-collapse: collapse;
-        }
-        table, th, td {
-            border: 1px solid black;
+            border-collapse: separate;
+            border:3px solid rgb(193, 246, 255) ;
+            
         }
         th, td {
-            padding: 10px;
-            text-align: left;
+            border: 1px solid #000000;
+            padding: 8px;
+            white-space: nowrap; /* Prevent text from wrapping */
+            word-wrap: break-word;
+            word-break: break-all;
         }
+        th {
+            text-align:center;
+        }
+        tr:nth-child(even) {
+            background-color: #f9f9f9;
+        }
+        tr:hover {
+            background-color: #7fe81d5f;
+        }
+        th {
+            padding-top: 12px;
+            padding-bottom: 12px;
+            background-color: #ffff397f;
+            color: #ff0606ab;
+        }
+        .container {
+            margin: 10% 5%;
+            display: block;
+            justify-content:center; /* Adjust space between items */
+            align-items: center; /* Vertically center align items */
+            border: 5.6px solid #938787;
+            border-radius: 8px;
+            box-shadow: 50px 70px 10px rgba(0, 0, 0, 0.1);
+            margin-top: 10%;
+            padding: 5%;
+        }
+        .container > #checking > input
+        {
+            margin-left: 10%;
+            width: 15px;
+        }
+        .child {
+            margin: 10px;
+        }
+
+        input {
+            width: 150px;
+            padding: 10px;
+            margin-bottom: 20px;
+            border: none;
+            border-bottom: 2px dotted #000000;
+            outline: none;
+        }
+
+        form {
+            padding: auto 10%;
+            padding-left: 10%;
+        }
+
+        .out {
+            margin: 10% 5%;
+            margin-right: 20%;
+            margin-left: 10%;
+        }
+
+        .para {
+            padding: 10px;
+        }
+        .marks
+        {
+            padding: 10px;
+            border-radius: 5%;
+            color: rgb(0, 0, 0);
+            background-color: rgba(237, 119, 119, 0.781);
+            border: none;
+            border-right: 3px solid rgba(0, 0, 0, 0.518);
+            border-bottom: 3px solid rgba(0, 0, 0, 0.518);
+        }
+        /* label  */
+        input[type="checkbox"]
+        {
+            display: none;
+        }
+        .check-label {
+            border: 2px solid transparent;
+            padding: 5px;
+            display: flexbox;
+            position: relative;
+            padding-left: 30px; /* Adjust padding to make space for the tick */
+            margin: 5px;
+            border: 1px solid rgb(194, 187, 187);
+            border-radius: 10%;
+            background-color: #e7d8d887;
+        }
+        .check-label:hover
+        {
+            cursor:grab;
+        }
+
+        .checked-label {
+            
+            border: 2px solid rgb(52, 227, 140);
+            border-radius: 10%;
+        }
+
+        .checked-label::after {
+            content: '✔';  
+            position: absolute;
+            left: 5px;  
+            top: 50%;  
+            transform: translateY(-50%);  
+            color: #00805c87;  
+            font-size: 20px;  
+        } 
     </style>
 </head>
 <body>
-    <h1>QR Code Scanner </h1>
-    <video id="video" autoplay></video>
-    <div id="result">Scanning for QR code...</div>
 
-    <h1>Profile Information</h1>
-    <div id="profileContainer">
-        <!-- Table to display profile details -->
-        <table id="profileTable">
-            <thead>
-                <tr>
-                    <th>Name</th>
-                    <th>Breakfast</th>
-                    <th>Lunch</th>
-                    <th>Dinner</th>
-                    <th>Breakfast Reason</th>
-                    <th>Lunch Reason</th>
-                    <th>Dinner Reason</th>
-                </tr>
-            </thead>
-            <tbody>
-                <tr>
-                    <td colspan="7">Loading...</td>
-                </tr>
-            </tbody>
-        </table>
+    <nav class="navbar navbar-dark bg-dark my" aria-label="First navbar example">
+        <div class="container-fluid">
+            <div class="col-md-3 mb-2 mb-md-0 logo">
+                <a href="" class="d-inline-flex link-body-emphasis text-decoration-none" >
+                    <!-- Insert logo image -->
+                    <img src="./hostel_mess_logo_3.jpg " alt="Description of the image" height="40px" width="40px" >
+                </a>
+            </div>
+            <div style=" display: flex; justify-content: center;">
+            <a class="navbar-brand" href="#" style="margin-left: 1%;" >Food >> Money</a>
+           </div> 
+           <button class="navbar-toggler collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#navbarsExample01" aria-controls="navbarsExample01" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+    
+            <div class="navbar-collapse collapse" id="navbarsExample01">
+                <ul class="navbar-nav me-auto mb-2">
+                    <li class="nav-item">
+                        <a class="nav-link active" aria-current="page" href="./admine-home.html">Home</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link active" aria-current="page" href="./choose-admin.html">choose-food</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#" onclick="showProfileOverlay(event)">
+                            Profile 
+                        </a>
 
-        <!-- Attendance Checkboxes -->
-        <div class="attendance-checkboxes" id="attendanceContainer">
-            <label><input type="checkbox" id="breakfastCheckbox"> Breakfast</label>
-            <label><input type="checkbox" id="lunchCheckbox"> Lunch</label>
-            <label><input type="checkbox" id="dinnerCheckbox"> Dinner</label>
-            <button id="markAttendanceButton">Mark Attendance</button>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link active" aria-current="page" href="./make-admine.html">Make Admine</a>
+                    </li>
+                    
+                    
+                    <li class="nav-item">
+                        <a class="nav-link active" aria-current="page" href="#" onclick="fetch('/signout', {method: 'POST'}).then(response => { if (response.ok) window.location.href = '/login.html'; else alert('Failed to sign out.'); }).catch(error => { console.error('Error during signout:', error); 
+                        alert('Failed to sign out.'); });">Sign Out<span style="margin-left: 10px;"></span><svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" class="bi bi-box-arrow-right" viewBox="0 0 16 16">
+                            <path fill-rule="evenodd" d="M10 12.5a.5.5 0 0 1-.5.5h-8a.5.5 0 0 1-.5-.5v-9a.5.5 0 0 1 .5-.5h8a.5.5 0 0 1 .5.5v2a.5.5 0 0 0 1 0v-2A1.5 1.5 0 0 0 9.5 2h-8A1.5 1.5 0 0 0 0 3.5v9A1.5 1.5 0 0 0 1.5 14h8a1.5 1.5 0 0 0 1.5-1.5v-2a.5.5 0 0 0-1 0z"/>
+                            <path fill-rule="evenodd" d="M15.854 8.354a.5.5 0 0 0 0-.708l-3-3a.5.5 0 0 0-.708.708L14.293 7.5H5.5a.5.5 0 0 0 0 1h8.793l-2.147 2.146a.5.5 0 0 0 .708.708z"/>
+                          </svg></a>
+                    </li>
+                    
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+
+
+
+    <!--*****************WRITE YOUR HTML CODE DOWN **************DONT CHANGE ANYTHING***************** */-->
+
+    <div class="out">  
+        <div class="container"> 
+            <h1>QR Code Scanner </h1>
+                <video id="video" autoplay></video>
+                <div id="result">Scanning for QR code...</div>
+
+                <!-- Attendance Checkboxes -->
+                <div class="attendance-checkboxes" id="attendanceContainer">
+                    <input type="checkbox" name="check-absent" id="breakfastCheckbox" >
+                    <label for="breakfastCheckbox" class="check-label ">BREAKFAST</label>
+                    
+                    <!-- Lunch Checkbox -->
+                    <input type="checkbox" name="check-absent" id="lunchCheckbox" >
+                    <label for="lunchCheckbox" class="check-label">LUNCH</label>
+                    
+                    <!-- Dinner Checkbox -->
+                    <input type="checkbox" name="check-absent" id="dinnerCheckbox" >
+                    <label for="dinnerCheckbox" class="check-label ">DINNER</label>
+                </div>
+                <button type="button" id="markAttendanceButton" class="marks" >Mark Attendance</button>
+
+                <h1>Profile Information</h1>
+                <div id="profileContainer" class="table-container">
+                    <!-- Table to display profile details -->
+                    <table id="profileTable">
+                        <thead>
+                            <tr>
+                                <th>Name</th>
+                                <th>Breakfast</th>
+                                <th>Lunch</th>
+                                <th>Dinner</th>
+                                <th>Breakfast Reason</th>
+                                <th>Lunch Reason</th>
+                                <th>Dinner Reason</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td colspan="7">Loading...</td>
+                            </tr>
+                        </tbody>
+                    </table>
+
+                    
+                </div>
+
         </div>
     </div>
+
+   
 
     <!-- Play Button Fallback for Mobile Devices -->
     <button id="playButton">Start Scanning</button>
@@ -111,6 +333,22 @@
                 resultElement.textContent = "Your device does not support camera access.";
             }
         }
+
+        function checkedAddition()
+        {
+            document.querySelectorAll('input[type="checkbox"]').forEach(checkbox => {
+                checkbox.addEventListener('change', function() {
+                    const label = document.querySelector(`label[for="${this.id}"]`);
+                    if (this.checked) {
+                        label.classList.add('checked-label');
+                    } else {
+                        label.classList.remove('checked-label');
+                    }
+                });
+            });
+        }
+
+        checkedAddition();
 
         // Function to display only the ID from the parsed JSON data
         function displayIdFromJson(jsonData) {
@@ -243,27 +481,35 @@
                 alert('No profile ID detected. Please scan a QR code first.');
                 return;
             }
-
+            const breakfastCheckbox = document.getElementById('breakfastCheckbox');
+            const lunchCheckbox = document.getElementById('lunchCheckbox');
+            const dinnerCheckbox = document.getElementById('dinnerCheckbox');
             // Prepare data for marking attendance
             const attendanceData = {
                 id: id,
-                breakfast: breakfastCheckbox.checked,
-                lunch: lunchCheckbox.checked,
-                dinner: dinnerCheckbox.checked
+                breakfast: breakfastCheckbox.checked ? 1 : 0,
+                lunch: lunchCheckbox.checked ? 1 : 0,
+                dinner: dinnerCheckbox.checked ? 1 : 0
             };
+            
+            if (!breakfastCheckbox.checked && !lunchCheckbox.checked && !dinnerCheckbox.checked) {
+                alert('Please select at least one meal (Breakfast, Lunch, or Dinner) before submitting.');
+                video.play();
+                return startVideo(); // Exit function if none of the checkboxes are checked
+            }
 
             fetch('/markAttendance', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json'
                 },
-                body: JSON.stringify(attendanceData)
+                body: JSON.stringify(attendanceData),
             })
             .then(response => response.json())
             .then(data => {
-                if (data.redirect) {
+                if (data.response) {
                         // Redirect to login if the user is not logged in
-                        window.location.href = data.redirect;
+                        window.location.href = './login.html';
                         return;
                 }
 
@@ -286,10 +532,48 @@
             })
             .catch(error => {
                 alert('Error: ' + error.message);
+                window.location.href = './login.html';
             });
         });
 
+        function updateLabelClasses() {
+            document.querySelectorAll('input[type="checkbox"]').forEach(checkbox => {
+                const label = document.querySelector(`label[for="${checkbox.id}"]`);
+                if (checkbox.checked) {
+                    label.classList.add('checked-label');
+                } else {
+                    label.classList.remove('checked-label');
+                }
+            });
+        }
 
+        function autoCheckMealByTime() {
+            const currentTime = new Date();
+            const hours = currentTime.getHours(); // Get current hour (24-hour format)
+            
+            const breakfastCheckbox = document.getElementById('breakfastCheckbox');
+            const lunchCheckbox = document.getElementById('lunchCheckbox');
+            const dinnerCheckbox = document.getElementById('dinnerCheckbox');
+            // Clear previous checks
+            breakfastCheckbox.checked = false;
+            lunchCheckbox.checked = false;
+            dinnerCheckbox.checked = false;
+
+            // Check the appropriate meal checkbox based on time range
+            if (hours >= 6 && hours <= 10) {
+                breakfastCheckbox.checked = true; // 6 AM to 10 AM for breakfast
+            } else if (hours >= 11 && hours <= 15) {
+                lunchCheckbox.checked = true; // 11 AM to 3 PM for lunch
+            } else if (hours >= 17 && hours <= 21) {
+                dinnerCheckbox.checked = true; // 5 PM to 9 PM for dinner
+            }
+
+            updateLabelClasses();
+        }
+
+        checkedAddition();
+        autoCheckMealByTime();
+        
         // Start the video on page load
         startVideo();
     </script>
