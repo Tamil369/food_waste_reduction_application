@@ -971,7 +971,7 @@ app.post('/markAttendance', (req, res) => {
                 return res.status(500).json({ error: 'Database error' });
             }
 
-            res.status(200).json({ success: true, message: 'Profile updated successfully. '+sql });
+            res.status(200).json({ success: true, message: 'Profile updated successfully. ' });
         });
     } catch (error) {
         console.error('Unexpected error:', error);
