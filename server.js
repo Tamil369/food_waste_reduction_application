@@ -16,6 +16,10 @@ cron.schedule('37 17 * * *', () => {
   console.log('hello everyone');
 });
 
+cron.schedule('*/3 * * * *', () => {
+    console.log('Cron job running, but printing nothing.');
+    // You can perform tasks here, if needed
+});
 
 console.log('Cron job is set up to upload data every day at 11:58 .');
 
