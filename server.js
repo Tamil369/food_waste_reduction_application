@@ -11,15 +11,15 @@ const port = 3011;
 
 const cron = require('node-cron');
 
-// Schedule a task to run every day at 2am
+Schedule a task to run every day at 2am
 cron.schedule('37 17 * * *', () => {
   console.log('hello everyone');
 });
 
-cron.schedule('*/3 * * * *', () => {
-    console.log('Cron job running, but printing nothing.');
-    // You can perform tasks here, if needed
-});
+// cron.schedule('*/3 * * * *', () => {
+//     console.log('Cron job running, but printing nothing.');
+//     // You can perform tasks here, if needed
+// });
 
 console.log('Cron job is set up to upload data every day at 11:58 .');
 
