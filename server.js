@@ -11,15 +11,15 @@ const port = 3011;
 
 const cron = require('node-cron');
 
-Schedule a task to run every day at 2am
+// Schedule a task to run every day at 2am
 cron.schedule('37 17 * * *', () => {
   console.log('hello everyone');
 });
 
-// cron.schedule('*/3 * * * *', () => {
-//     console.log('Cron job running, but printing nothing.');
-//     // You can perform tasks here, if needed
-// });
+cron.schedule('*/3 * * * *', () => {
+    console.log('Cron job running, but printing nothing.');
+    // You can perform tasks here, if needed
+});
 
 console.log('Cron job is set up to upload data every day at 11:58 .');
 
@@ -148,28 +148,28 @@ app.post('/check-absent', (req, res) => {
         switch (meal) {
             case 'breakfast':
                 query = `
-                    SELECT name, phone, year, dept, bfreason AS reason
+                    SELECT name, phone, year, gender, dept, bfreason AS reason
                     FROM Profile
                     WHERE abf = 0
                 `;
                 break;
             case 'lunch':
                 query = `
-                    SELECT name, phone, year, dept, lreason AS reason
+                    SELECT name, phone, year, gender, dept, lreason AS reason
                     FROM Profile
                     WHERE al = 0
                 `;
                 break;
             case 'dinner':
                 query = `
-                    SELECT name, phone, year, dept, dreason AS reason
+                    SELECT name, phone, year, gender, dept, dreason AS reason
                     FROM Profile
                     WHERE ad = 0
                 `;
                 break;
             case 'breakfast_and_lunch':
                 query = `
-                    SELECT name, phone, year, dept, 
+                    SELECT name, phone, year, gender, dept, 
                         CONCAT(bfreason, ', ', lreason) AS reason
                     FROM Profile
                     WHERE abf = 0 AND al = 0
@@ -177,7 +177,7 @@ app.post('/check-absent', (req, res) => {
                 break;
             case 'breakfast_and_dinner':
                 query = `
-                    SELECT name, phone, year, dept, 
+                    SELECT name, phone, year, gender, dept, 
                         CONCAT(bfreason, ', ', dreason) AS reason
                     FROM Profile
                     WHERE abf = 0 AND ad = 0
@@ -185,7 +185,7 @@ app.post('/check-absent', (req, res) => {
                 break;
             case 'lunch_and_dinner':
                 query = `
-                    SELECT name, phone, year, dept, 
+                    SELECT name, phone, year, gender, dept, 
                         CONCAT(lreason, ', ', dreason) AS reason
                     FROM Profile
                     WHERE al = 0 AND ad = 0
@@ -193,7 +193,7 @@ app.post('/check-absent', (req, res) => {
                 break;
             case 'all':
                 query = `
-                    SELECT name, phone, year, dept, 
+                    SELECT name, phone, year, gender, dept, 
                         CONCAT(bfreason, ', ', lreason, ', ', dreason) AS reason
                     FROM Profile
                     WHERE abf = 0 AND al = 0 AND ad = 0
