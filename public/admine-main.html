@@ -273,6 +273,7 @@
             white-space: nowrap; /* Prevent text from wrapping */
             word-wrap: break-word;
             word-break: break-all;
+            text-align: center;
         }
         th {
             text-align:center;
@@ -622,10 +623,16 @@
             <label class="labforp">BreakFast :<p id="profilebf" style="display: inline; margin: 0;"></p></label>
             <label class="labforp">Lunch :<p id="profileLunch" style="display: inline; margin: 0;"></p></label>
             <label class="labforp">Dinner :<p id="profileDinner" style="display: inline; margin: 0;"></p></label>
-            <h3> Attendance Status:</h3>
-            <label class="labforp">BreakFast:<p id="profileabf" style="display: inline; margin: 0;"></p></label>
-            <label class="labforp">Lunch:<p id="profileal" style="display: inline; margin: 0;"></p></label>
-            <label class="labforp">Dinner<p id="profilead" style="display: inline; margin: 0;"></p></label>
+            
+            <details>
+                <summary><h3> Attendance Status:</h3> </summary>
+                <div>
+                    <label class="labforp">BreakFast:<p id="profileabf" style="display: inline; margin: 0;"></p></label>
+                    <label class="labforp">Lunch:<p id="profileal" style="display: inline; margin: 0;"></p></label>
+                    <label class="labforp">Dinner<p id="profilead" style="display: inline; margin: 0;"></p></label>
+                </div>
+            </details>
+            
             <button type="button" class="btn btn-outline-info" onclick="QRCODE(event)"> Show QR </button>
                         
             <div class="qr" >
@@ -864,23 +871,30 @@
         function filterTable() {
             const checkedDepts = Array.from(document.querySelectorAll('.dept-filter:checked')).map(cb => cb.value);
             const checkedYears = Array.from(document.querySelectorAll('.year-filter:checked')).map(cb => cb.value);
-
+            const checkedGen = Array.from(document.querySelectorAll('.gen-filter:checked')).map(cb => cb.value);
+            
             const table = document.getElementById('sampleTable');
             const rows = table.getElementsByTagName('tr');
-
+            let x = 1;
             for (let i = 1; i < rows.length; i++) {
                 const cells = rows[i].getElementsByTagName('td');
-                const dept = cells[4].textContent;
-                const year = cells[3].textContent;
-
+                const gen = cells[5].textContent.trim(); // Gender is in the 5th cell (index 5)
+                const dept = cells[4].textContent.trim(); // Department is in the 4th cell (index 4)
+                const year = cells[3].textContent.trim(); // Year is in the 3rd cell (index 3)
+                
+                
                 if ((checkedDepts.length === 0 || checkedDepts.includes(dept)) &&
-                    (checkedYears.length === 0 || checkedYears.includes(year))) {
+                    (checkedYears.length === 0 || checkedYears.includes(year)) &&
+                    (checkedGen.length === 0 || checkedGen.includes(gen))) {
                     rows[i].style.display = '';
+                    cells[0].textContent= x;
+                    x++;
                 } else {
                     rows[i].style.display = 'none';
                 }
             }
         }
+
         function fetchAbsentData(meal) 
         {
             let id =1;
@@ -908,6 +922,11 @@
                         <label class="check-label" for='f3'><input type="checkbox" class="year-filter" value="III" id='f3'> III</label>
                         <label class="check-label" for='f4'><input type="checkbox" class="year-filter" value="IV" id='f4'> IV</label>
                     <hr>
+                    <h5>Filter by Gender</h5>
+                        <label class="check-label" for='g'><input type="checkbox" class="gen-filter" value="FEMALE" id='g'> Girls</label>
+                        <label class="check-label" for='m'><input type="checkbox" class="gen-filter" value="MALE" id='m'> Boys</label>
+                    <hr>
+
                     <h3> Table For ${mealType}       </h3>
                         <table id="sampleTable">
                         <thead>
@@ -917,6 +936,7 @@
                                 <th>Phone</th>
                                 <th>Year</th>
                                 <th>Dept</th>
+                                <th>Gender</th>
                                 <th>Reason</th>
                                 <th>Date</th>
                             </tr>
@@ -930,11 +950,13 @@
                             <td>${item.phone}</td>
                             <td>${item.year}</td>
                             <td>${item.dept}</td>
+                            <td>${ (item.gender == 1) ? "MALE" : "FEMALE"}</td>
                             <td>${item.reason}</td>
                             <td>${getTomorrowsDateinAdmine()}</td>
                         </tr>`;
                     id=id+1;
                 });
+                // <td>${ (item.gender == 1) ? "MALE" : "FEMALE"}</td>
                 displayText += `
                         </tbody>
                     </table>
@@ -943,7 +965,7 @@
                 `;
                 document.getElementById('todisplay').innerHTML = displayText;
                 
-                document.querySelectorAll('.dept-filter, .year-filter').forEach(filter => {
+                document.querySelectorAll('.dept-filter, .year-filter, .gen-filter').forEach(filter => {
                     filter.addEventListener('change', filterTable);
                     console.log("entered here");
                 });
