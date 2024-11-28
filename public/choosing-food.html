@@ -566,16 +566,16 @@
             <form>
                 
                 <div class="form-group">
-                    <label for="datalunch">Lunch Data</label>
+                    <label for="datalunch">Lunch :<span id="date1"></span></label>
                     <input type="text" id="datalunch" name="datalunch" placeholder="Enter lunch data" disabled required>
                 </div>
 
                 <div class="form-group">
-                    <label for="datadinner">Dinner Data</label>
+                    <label for="datadinner">Dinner :<span id="date2"></span></label>
                     <input type="text" id="datadinner" name="datadinner" placeholder="Enter dinner data" disabled required>
                 </div>
                 <div class="form-group">
-                    <label for="databf">Breakfast Data</label>
+                    <label for="databf">Breakfast :<span id="date3"></span></label>
                     <input type="text" id="databf" name="databf" placeholder="Enter breakfast data" disabled required>
                 </div>
 
@@ -632,6 +632,13 @@
         notice.textContent+=getTomorrowsDateinAdmine();
 
         const formarray = ['bf-form', 'lunch-form', 'dinner-form'];
+
+        function displayDate() {
+            
+            document.getElementById("date1").textContent = formaldate();
+            document.getElementById("date2").textContent = formaldate();
+            document.getElementById("date3").textContent = nextdate();
+        }
 
         function checkbf() {
             if (bfYesRadio.checked) {
@@ -809,7 +816,7 @@
 
 
         document.addEventListener('DOMContentLoaded', function() {
-        
+            displayDate();
         functiontoSetSelectedValues();
         updateFormVisibility();
         setInterval(updateFormVisibility, 60000); // Check every minute
@@ -1096,6 +1103,13 @@
             const year = date.getFullYear();
 
             return `${day}-${month}-${year}`;
+        }
+        
+        function nextdate(date = new Date()) {
+            const tomorrow = new Date();
+            tomorrow.setDate(tomorrow.getDate() + 1); // Add 1 day to the current date
+
+            return formaldate(tomorrow);
         }
 
         function getAttendanceStatus(value) {
