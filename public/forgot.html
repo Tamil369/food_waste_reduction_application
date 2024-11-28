@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Forgot Password</title>
+  
+  <style>
+    body {
+  font-family: Arial, sans-serif;
+  background-color: #f7f7f7;
+  margin: 0;
+  padding: 0;
+}
+
+.container {
+  max-width: 400px;
+  margin: 50px auto;
+  background: white;
+  padding: 20px;
+  border-radius: 5px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  text-align: center;
+}
+
+h1 {
+  color: #333;
+}
+
+label {
+  display: block;
+  margin-top: 20px;
+  text-align: left;
+  color: #333;
+}
+
+input {
+  width: 100%;
+  padding: 10px;
+  margin-top: 5px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+}
+
+button {
+  margin-top: 20px;
+  width: 100%;
+  padding: 10px;
+  background-color: #007bff;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+button:hover {
+  background-color: #0056b3;
+}
+
+#response-message {
+  margin-top: 20px;
+  font-size: 14px;
+}
+
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>Forgot Password</h1>
+    <p>Enter your email address to receive your password and a reset link.</p>
+    <form id="forgot-password-form">
+      <label for="email">Email Address</label>
+      <input type="email" id="email" name="email" required placeholder="Enter your email">
+      <button type="submit">Submit</button>
+    </form>
+    <div id="response-message"></div>
+  </div>
+
+  <script >
+    // forgot-password.js
+
+        document.getElementById('forgot-password-form').addEventListener('submit', function (e) {
+        e.preventDefault(); // Prevent form submission
+
+        const email = document.getElementById('email').value;
+        const responseMessage = document.getElementById('response-message');
+        alert(email);
+
+        // Clear previous messages
+        responseMessage.textContent = '';
+
+        // Make the request to the server
+        fetch('/forgot', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ email: email })
+        })
+            .then((response) => {
+            if (!response.ok) {
+                return response.json().then((err) => {
+                throw new Error(err.error || 'Something went wrong');
+                });
+            }
+            return response.json();
+            })
+            .then((data) => {
+            // Display success message
+            let t=data.message;
+            alert(t);
+            responseMessage.style.color = 'green';
+            responseMessage.textContent = t;
+            window.location.href= "./login.html";
+            })
+            .catch((error) => {
+            // Display error message
+            responseMessage.style.color = 'red';
+            responseMessage.textContent = error.message;
+            });
+        });
+
+  </script>
+</body>
+</html>
