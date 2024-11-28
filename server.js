@@ -4,12 +4,13 @@ const mysql = require('mysql');
 const bodyParser = require('body-parser');
 const session = require('express-session');
 const path = require('path'); // Import the 'path' module
-
+const nodemailer = require('nodemailer');
 
 const app = express();
 const port = 3011;
 
 const cron = require('node-cron');
+const { console } = require('inspector');
 
 // Schedule a task to run every day at 2am
 cron.schedule('37 17 * * *', () => {
@@ -96,7 +97,14 @@ function handleDisconnect() {
 
 handleDisconnect();
 
-
+// Configure Nodemailer
+const transporter = nodemailer.createTransport({
+    service: 'gmail', // Use your email service
+    auth: {
+      user: 'gcedpihelpdesk@gcedpi.edu.in', // Replace with your email
+      pass: 'yvuz gako esug eyjl', // Replace with your email password or app-specific password
+    },
+  });
 
 
 
@@ -133,6 +141,133 @@ app.post('/signout', (req, res) => {
       res.send('Successfully signed out.');
     });
 });
+  
+
+// Forgot Password Route
+app.post('/forgot', (req, res) => {
+    const { email } = req.body;
+  
+    // Validate email
+    if (!email) {
+      return res.status(400).json({ error: 'Email is required' });
+    }
+  
+    // Query database for the email
+    db.query('SELECT * FROM Profile WHERE user_id = ?', [email], (err, rows) => {
+      if (err) {
+        console.error('Database error:', err);
+        return res.status(500).json({ error: 'An error occurred, please try again later' });
+      }
+  
+      if (rows.length === 0) {
+        return res.status(404).json({ error: 'Email not found' });
+      }
+  
+      const user = rows[0];
+      const { password } = user;
+  
+      // Generate a reset token (optional)
+      
+      const resetLink = `https://food-waste-reduction-application.onrender.com/reset.html`;
+  
+      // Configure email transporter
+      const transporter = nodemailer.createTransport({
+        service: 'gmail',
+        auth: {
+          user: 'gcedpihelpdesk@gcedpi.edu.in',
+          pass: 'tgcp myhe heuu thxq' // Make sure to replace with actual password
+        }
+      });
+  
+      // Send password recovery email
+      const mailOptions = {
+        from: 'gcedpihelpdesk@gcedpi.edu.in',
+        to: email,
+        subject: 'Password Recovery',
+        html: `
+          <!DOCTYPE html>
+          <html>
+          <head>
+            <style>
+              body { font-family: Arial, sans-serif; background-color: #f4f4f4; margin: 0; padding: 0; }
+              .email-container { max-width: 600px; margin: 20px auto; background-color: #ffffff; border-radius: 8px; box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); overflow: hidden; }
+              .email-header { background-color: #007bff; color: #ffffff; padding: 20px; text-align: center; font-size: 24px; font-weight: bold; }
+              .email-body { padding: 20px; color: #333333; line-height: 1.6; }
+              .email-footer { text-align: center; font-size: 12px; color: #666666; padding: 10px; border-top: 1px solid #dddddd; background-color: #f4f4f4; }
+              .btn { display: inline-block; margin-top: 20px; padding: 10px 20px; color: #ffffff; background-color: #007bff; text-decoration: none; border-radius: 5px; font-size: 16px; }
+              .btn:hover { background-color: #0056b3; }
+            </style>
+          </head>
+          <body>
+            <div class="email-container">
+              <div class="email-header">Password Recovery Assistance</div>
+              <div class="email-body">
+                <p>Dear User,</p>
+                <p>We received a request to recover your account password. Below is your current password:</p>
+                <p style="font-size: 18px; font-weight: bold; color: #007bff;">${password}</p>
+                <p>For your security, we recommend changing your password after logging in.</p>
+                <p>If you wish to reset your password, click the button below:</p>
+                <a href="${resetLink}" class="btn">Reset Your Password</a>
+                <p>If you did not request this, please ignore this email or contact support for assistance.</p>
+                <p>Thank you,<br>The GCEDPI Helpdesk Team</p>
+              </div>
+              <div class="email-footer">
+                &copy; ${new Date().getFullYear()} GCEDPI. All Rights Reserved.<br>
+                <a href="mailto:gcedpihelpdesk@gcedpi.edu.in" style="color: #007bff; text-decoration: none;">Contact Support</a>
+              </div>
+            </div>
+          </body>
+          </html>
+        `
+      };
+  
+      // Send email with callback
+      transporter.sendMail(mailOptions, (error, info) => {
+        if (error) {
+          console.error('Error sending email:', error);
+          return res.status(500).json({ error: 'Error sending email. Please try again later' });
+        }
+  
+        // Successfully sent email
+        res.json({ message: 'Password and reset link sent to your email' });
+      });
+    });
+  });
+  
+
+  app.post('/reset', (req, res) => {
+    const { email, currentPassword, newPassword } = req.body;
+  
+    // Check if the email exists in the database
+    db.query('SELECT * FROM Profile WHERE user_id = ?', [email], (err, rows) => {
+      if (err) {
+        console.error('Database query error:', err);
+        return res.status(500).json({ error: 'An error occurred, please try again later' });
+      }
+  
+      if (rows.length === 0) {
+        return res.status(404).json({ error: 'Email not found' });
+      }
+  
+      const user = rows[0];
+  
+      // Compare the current password directly
+      if (user.password !== currentPassword) {
+        return res.status(401).json({ error: 'Current password is incorrect' });
+      }
+  
+      // Update the password in the database
+      db.query('UPDATE Profile SET password = ? WHERE user_id = ?', [newPassword, email], (err) => {
+        if (err) {
+          console.error('Error updating password:', err);
+          return res.status(500).json({ error: 'An error occurred, please try again later' });
+        }
+  
+        res.json({ message: 'Password successfully updated!' });
+      });
+    });
+  });
+  
   
 
 app.post('/check-absent', (req, res) => {
