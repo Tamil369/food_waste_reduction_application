@@ -531,9 +531,9 @@ app.post('/login', (req, res) => {
         console.log(req.session.user.username);
 
         if (admin === 1) {
-            res.json({ redirect: '/admine-main.html' });
+            res.json({ redirect: '/admine-home.html' });
         } else {
-            res.json({ redirect: '/choosing-food.html' });
+            res.json({ redirect: '/student-home.html' });
         }
     });
 });
