@@ -97,14 +97,13 @@ function handleDisconnect() {
 
 handleDisconnect();
 
-// Configure Nodemailer
 const transporter = nodemailer.createTransport({
-    service: 'gmail', // Use your email service
-    auth: {
-      user: 'gcedpihelpdesk@gcedpi.edu.in', // Replace with your email
-      pass: 'yvuz gako esug eyjl', // Replace with your email password or app-specific password
-    },
-  });
+        service: 'gmail',
+        auth: {
+          user: 'aforapplebforball987@gmail.com',
+          pass: 'qtwh medb uhvp oagk' // Make sure to replace with actual password
+        }
+      });
 
 
 
@@ -171,13 +170,7 @@ app.post('/forgot', (req, res) => {
       const resetLink = `https://food-waste-reduction-application.onrender.com/reset.html`;
   
       // Configure email transporter
-      const transporter = nodemailer.createTransport({
-        service: 'gmail',
-        auth: {
-          user: 'gcedpihelpdesk@gcedpi.edu.in',
-          pass: 'tgcp myhe heuu thxq' // Make sure to replace with actual password
-        }
-      });
+      
   
       // Send password recovery email
       const mailOptions = {
