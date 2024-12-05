@@ -395,15 +395,11 @@
 
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link active" aria-current="page" href="#" onclick="showProfileOverlay(event); QRCODE(event);">QR code</a>
+                        <a class="nav-link active" aria-current="page" href="#" onclick="showProfileOverlay(event)">QR code</a>
                     </li>
                     <li class="nav-item dropdown">
-                        <a class="nav-link dropdown-toggle" href="#" data-bs-toggle="dropdown" aria-expanded="false">Contact</a>
-                        <ul class="dropdown-menu">
-                            <li><a class="dropdown-item" href="#">E-mail</a></li>
-                            <li><a class="dropdown-item" href="#">Call </a></li>
-                            <li><a class="dropdown-item" href="#">Letter</a></li>
-                        </ul>
+                        <a class="nav-link dropdown-toggle" href="https://gcehelpdesk.onrender.com" >Contact</a>
+                        
                     </li>
                     <li class="nav-item">
                         <a class="nav-link active" aria-current="page"  id="signout-button" href="#" onclick="fetch('/signout', {method: 'POST'}).then(response => { if (response.ok) window.location.href = '/login.html'; else alert('Failed to sign out.'); }).catch(error => { console.error('Error during signout:', error); alert('Failed to sign out.'); });" >Sign Out<svg style="margin-left: 10px;" xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor"  class="bi bi-box-arrow-right" viewBox="0 0 16 16">
