@@ -526,7 +526,7 @@
 
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link active" aria-current="page" href="#" onclick="showProfileOverlay(event); QRCODE(event);">
+                        <a class="nav-link active" aria-current="page" href="#" onclick="showProfileOverlay(event)">
                             QR code
                         </a>
                     </li>
@@ -1037,7 +1037,19 @@
             fetch('/admin-main-data',{
                 credentials: 'include'
             })
-            .then(response => response.json())
+            .then(response => {
+                if (!response.ok) {
+                    // If server sends a redirect URL in JSON response, handle it
+                    return response.json().then(errData => {
+                        if (errData.redirect) {
+                            window.location.href = errData.redirect; // Redirect to the URL from the server
+                            throw new Error(errData.message || 'Redirecting to login.');
+                        }
+                        throw new Error(errData.message || 'An error occurred.');
+                    });
+                }
+                return response.json();
+            })
             .then(data => {
             document.getElementById('totalbf').textContent = data.totalbf;
             document.getElementById('totalLunch').textContent = data.totalLunch;

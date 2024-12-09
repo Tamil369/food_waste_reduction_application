@@ -395,7 +395,7 @@
 
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link active" aria-current="page" href="#" onclick="showProfileOverlay(event); QRCODE(event);">QR code</a>
+                        <a class="nav-link active" aria-current="page" href="#" onclick="showProfileOverlay(event)">QR code</a>
                     </li>
                     <li class="nav-item dropdown">
                         <a class="nav-link dropdown-toggle" href="#" data-bs-toggle="dropdown" aria-expanded="false">Contact</a>
@@ -753,7 +753,19 @@
             fetch('/setvalue',{
                 credentials: 'include'
 })
-                .then(response => response.json())
+                .then(response => {
+                    if (!response.ok) {
+                        // If server sends a redirect URL in JSON response, handle it
+                        return response.json().then(errData => {
+                            if (errData.redirect) {
+                                window.location.href = errData.redirect; // Redirect to the URL from the server
+                                throw new Error(errData.message || 'Redirecting to login.');
+                            }
+                            throw new Error(errData.message || 'An error occurred.');
+                        });
+                    }
+                    return response.json();
+                })
                 .then(data => {
                     foodPreferences.bf = parseFloat(data.bf);
                     foodPreferences.bfReason = data.bfreason;
@@ -841,7 +853,19 @@
             fetch('/fooddata',{
                 credentials: 'include'
 })
-            .then(response => response.json())
+            .then(response => {
+                    if (!response.ok) {
+                        // If server sends a redirect URL in JSON response, handle it
+                        return response.json().then(errData => {
+                            if (errData.redirect) {
+                                window.location.href = errData.redirect; // Redirect to the URL from the server
+                                throw new Error(errData.message || 'Redirecting to login.');
+                            }
+                            throw new Error(errData.message || 'An error occurred.');
+                        });
+                    }
+                    return response.json();
+                })
             .then(data => {
                 dl.value=data.lunch;
                 dd.value=data.dinner;
@@ -935,12 +959,18 @@
                 body: JSON.stringify(formData)
             })
             .then(response => {
-                
-                if (!response.ok) {
-                    throw new Error('Network response was not ok');
-                }
-                return response.json();
-            })
+                    if (!response.ok) {
+                        // If server sends a redirect URL in JSON response, handle it
+                        return response.json().then(errData => {
+                            if (errData.redirect) {
+                                window.location.href = errData.redirect; // Redirect to the URL from the server
+                                throw new Error(errData.message || 'Redirecting to login.');
+                            }
+                            throw new Error(errData.message || 'An error occurred.');
+                        });
+                    }
+                    return response.json();
+                })
             .then(data => {
                 if (data.redirect) {
                         window.location.href = data.redirect;
@@ -977,7 +1007,19 @@
                 },
                 credentials: 'include' // Include cookies for session
             })
-            .then(response => response.json())
+            .then(response => {
+                    if (!response.ok) {
+                        // If server sends a redirect URL in JSON response, handle it
+                        return response.json().then(errData => {
+                            if (errData.redirect) {
+                                window.location.href = errData.redirect; // Redirect to the URL from the server
+                                throw new Error(errData.message || 'Redirecting to login.');
+                            }
+                            throw new Error(errData.message || 'An error occurred.');
+                        });
+                    }
+                    return response.json();
+                })
             .then(data => {
                 if (data.error) {
                     alert(data.error);
