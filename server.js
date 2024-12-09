@@ -5,24 +5,15 @@ const bodyParser = require('body-parser');
 const session = require('express-session');
 const path = require('path'); // Import the 'path' module
 const nodemailer = require('nodemailer');
+const cookieParser = require('cookie-parser');
+const crypto = require('crypto');
 
 const app = express();
 const port = 3011;
 
-const cron = require('node-cron');
 const { console } = require('inspector');
 
-// Schedule a task to run every day at 2am
-cron.schedule('37 17 * * *', () => {
-  console.log('hello everyone');
-});
 
-cron.schedule('*/3 * * * *', () => {
-    console.log('Cron job running, but printing nothing.');
-    // You can perform tasks here, if needed
-});
-
-console.log('Cron job is set up to upload data every day at 11:58 .');
 
 
 
@@ -112,6 +103,7 @@ const transporter = nodemailer.createTransport({
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
 app.use(express.json());
+app.use(cookieParser());
 app.use(session({
   secret: 'your_secret_key',
   resave: false,
@@ -121,8 +113,26 @@ app.use(session({
 
 app.use(express.static(path.join(__dirname, 'public')));
 
-// Middleware to check session for /choose-food route
-//app.use('/choose-food', checkSession);
+const SECRET_KEY = 'Gce_dPi_hOSteL'.padEnd(32, '0'); // Pads with '0' to make it 32 characters
+
+const ALGORITHM = 'aes-256-cbc'; // Encryption algorithm
+// Encrypt data
+function encrypt(data) {
+    const iv = crypto.randomBytes(16); // Initialization vector
+    const cipher = crypto.createCipheriv(ALGORITHM, Buffer.from(SECRET_KEY, 'utf8'), iv);
+    let encrypted = cipher.update(JSON.stringify(data), 'utf8', 'hex');
+    encrypted += cipher.final('hex');
+    return `${iv.toString('hex')}:${encrypted}`;
+}
+
+// Decrypt data
+function decrypt(encryptedData) {
+    const [iv, encrypted] = encryptedData.split(':');
+    const decipher = crypto.createDecipheriv(ALGORITHM, Buffer.from(SECRET_KEY, 'utf8'), Buffer.from(iv, 'hex'));
+    let decrypted = decipher.update(encrypted, 'hex', 'utf8');
+    decrypted += decipher.final('utf8');
+    return JSON.parse(decrypted);
+}
 
 
 // Routes
@@ -137,6 +147,8 @@ app.post('/signout', (req, res) => {
         console.log("session is destoryed");
         return res.status(500).send('Failed to sign out.');
       }
+        res.clearCookie('userData');
+        // res.clearCookie('admin');
       res.send('Successfully signed out.');
     });
 });
@@ -264,9 +276,23 @@ app.post('/forgot', (req, res) => {
   
 
 app.post('/check-absent', (req, res) => {
-    if (!req.session.user.username) {
-        return res.status(404).json({redirect: '/login', message: 'Please log in first'}); 
-        // Redirect to login page if not logged in
+    // if (!req.session.user.username) {
+    //     return res.status(404).json({redirect: '/login', message: 'Please log in first'}); 
+    // }
+    if ((!req.session.user || !req.session.user.username) && (!req.cookies.userData)) {
+        return res.status(404).json({ redirect: '/login', message: 'Please log in first' });
+    }
+    if((!req.cookies.userData)){
+        return res.status(404).json({ redirect: '/login', message: 'Please log in first' });
+    }
+
+
+    if (!req.session.user || !req.session.user.username) {
+        const { username, admin } = decrypt(req.cookies.userData);
+        req.session.user = { username, admin };
+    }
+    if (req.session.user.admin===0) {
+        return res.status(404).json({ redirect: '/login', message: 'Admin access required!..' });
     }
     try
     {
@@ -346,9 +372,20 @@ app.post('/check-absent', (req, res) => {
     }
 });
 app.post('/Tcheck-absent', (req, res) => {
-    if (!req.session.user.username) {
-        return res.status(404).json({redirect: '/login', message: 'Please log in first'}); 
-        // Redirect to login page if not logged in
+    if ((!req.session.user || !req.session.user.username) && (!req.cookies.userData)) {
+        return res.status(404).json({ redirect: '/login', message: 'Please log in first' });
+    }
+    if((!req.cookies.userData)){
+        return res.status(404).json({ redirect: '/login', message: 'Please log in first' });
+    }
+
+
+    if (!req.session.user || !req.session.user.username) {
+        const { username, admin } = decrypt(req.cookies.userData);
+        req.session.user = { username, admin };
+    }
+    if (req.session.user.admin===0) {
+        return res.status(404).json({ redirect: '/login', message: 'Admin access required!..' });
     }
     try
     {
@@ -482,9 +519,17 @@ app.post('/signup', (req, res) => {
 
 // Endpoint to get profile data
 app.post('/profile', (req, res) => {
+    if ((!req.session.user || !req.session.user.username) && (!req.cookies.userData)) {
+        return res.status(404).json({ redirect: '/login', message: 'Please log in first' });
+    }
+    if((!req.cookies.userData)){
+        return res.status(404).json({ redirect: '/login', message: 'Please log in first' });
+    }
+
+
     if (!req.session.user || !req.session.user.username) {
-        res.status(401).json({ error: 'Unauthorized access' });
-        return;
+        const { username, admin } = decrypt(req.cookies.userData);
+        req.session.user = { username, admin };
     }
 
     const id = req.session.user.username;
@@ -527,6 +572,9 @@ app.post('/login', (req, res) => {
 
         const admin = results[0].admin;
         req.session.user = { username, admin };
+        const encryptedData = encrypt({ username, admin });
+        res.cookie('userData', encryptedData, { httpOnly: true, maxAge: 7*24 * 60 * 60 * 1000 }); // 7 day
+        
         console.log("user_id is added to session successfully");
         console.log(req.session.user.username);
 
@@ -543,9 +591,14 @@ app.post('/login', (req, res) => {
 app.post('/choose-food', (req, res) => {
     try {
       // Modified: Added session check
-      if (!req.session.user || !req.session.user.username) {
+      if ((!req.session.user || !req.session.user.username) && (!req.cookies.userData)) {
         return res.status(404).json({ redirect: '/login', message: 'Please log in first' });
-      }
+        }
+
+        if (!req.session.user || !req.session.user.username) {
+            const { username, admin } =decrypt(req.cookies.userData);
+            req.session.user = { username, admin };
+        }
   
       // Modified: Email retrieval from session
       const email = req.session.user.username;
@@ -572,9 +625,18 @@ app.post('/choose-food', (req, res) => {
 app.post('/Tchoose-food', (req, res) => {
     try {
       // Modified: Added session check
-      if (!req.session.user || !req.session.user.username) {
+      if ((!req.session.user || !req.session.user.username) && (!req.cookies.userData)) {
         return res.status(404).json({ redirect: '/login', message: 'Please log in first' });
-      }
+    }
+    if((!req.cookies.userData)){
+        return res.status(404).json({ redirect: '/login', message: 'Please log in first' });
+    }
+
+
+    if (!req.session.user || !req.session.user.username) {
+        const { username, admin } =decrypt(req.cookies.userData);
+        req.session.user = { username, admin };
+    }
   
       // Modified: Email retrieval from session
       const email = req.session.user.username;
@@ -604,10 +666,17 @@ app.post('/Tchoose-food', (req, res) => {
 // Make admin endpoint
 app.post('/make-admin', (req, res) => {
     try{
-        if (!req.session.user.username) {
-                return res.status(404).json({redirect: '/login', message: 'Please log in first'}); 
-                // Redirect to login page if not logged in
-            }
+        if ((!req.session.user || !req.session.user.username) && (!req.cookies.userData)) {
+        return res.status(404).json({ redirect: '/login', message: 'Please log in first' });
+        }
+
+        if (!req.session.user || !req.session.user.username) {
+            const { username, admin } =decrypt(req.cookies.userData);
+            req.session.user = { username, admin };
+        }
+        if (req.session.user.admin===0) {
+        return res.status(404).json({ redirect: '/login', message: 'Admin access required!..' });
+        }   
             const email = req.body.email;
 
             // Check if the user exists
@@ -639,9 +708,17 @@ app.post('/make-admin', (req, res) => {
 // Food Data
 app.get('/fooddata', (req, res) => {
     try{
-        if (!req.session.user.username) {
-        return res.status(404).json({redirect: '/login', message: 'Please log in first'}); 
-        // Redirect to login page if not logged in
+        if ((!req.session.user || !req.session.user.username) && (!req.cookies.userData)) {
+        return res.status(404).json({ redirect: '/login', message: 'Please log in first' });
+    }
+    if((!req.cookies.userData)){
+        return res.status(404).json({ redirect: '/login', message: 'Please log in first' });
+    }
+
+
+    if (!req.session.user || !req.session.user.username) {
+        const { username, admin } =decrypt(req.cookies.userData);
+        req.session.user = { username, admin };
     }
     const query = 'SELECT * FROM FoodData ORDER BY id DESC LIMIT 1;';
 
@@ -684,9 +761,24 @@ app.post('/writedata', (req, res) => {
 // Admin-main page endpoint
 app.get('/admin-main-data', (req, res) => {
     try{
-        if (!req.session.user.username) {
-        return res.status(404).json({redirect: '/login', message: 'Please log in first'}); 
-        // Redirect to login page if not logged in
+        
+       if ((!req.session.user || !req.session.user.username) && (!req.cookies.userData)) {
+        return res.status(404).json({ redirect: '/login', message: 'Please log in first' });
+    }
+    if((!req.cookies.userData)){
+        return res.status(404).json({ redirect: '/login', message: 'Please log in first' });
+    }
+
+    if((!req.cookies.userData)){
+        return res.status(404).json({ redirect: '/login', message: 'Please log in first' });
+    }
+
+    if (!req.session.user || !req.session.user.username) {
+        const { username, admin } =decrypt(req.cookies.userData);
+        req.session.user = { username, admin };
+    }
+    if (req.session.user.admin===0) {
+        return res.status(404).json({ redirect: '/login', message: 'Admin access required!..' });
     }
     const query = 'SELECT SUM(bf) as totalbf, SUM(lunch) as totalLunch, SUM(dinner) as totalDinner, COUNT(*) as totalRows FROM Profile';
 
@@ -706,9 +798,20 @@ app.get('/admin-main-data', (req, res) => {
 //Tomorrow Admin-main page endpoint
 app.get('/Tadmin-main-data', (req, res) => {
     try{
-        if (!req.session.user.username) {
-        return res.status(404).json({redirect: '/login', message: 'Please log in first'}); 
-        // Redirect to login page if not logged in
+        if ((!req.session.user || !req.session.user.username) && (!req.cookies.userData)) {
+        return res.status(404).json({ redirect: '/login', message: 'Please log in first' });
+    }
+    if((!req.cookies.userData)){
+        return res.status(404).json({ redirect: '/login', message: 'Please log in first' });
+    }
+
+
+    if (!req.session.user || !req.session.user.username) {
+        const { username, admin } =decrypt(req.cookies.userData);
+        req.session.user = { username, admin };
+    }
+    if (req.session.user.admin===0) {
+        return res.status(404).json({ redirect: '/login', message: 'Admin access required!..' });
     }
     const query = 'SELECT SUM(Tbf) as totalbf, SUM(Tlunch) as totalLunch, SUM(Tdinner) as totalDinner, COUNT(*) as totalRows FROM Profile';
 
@@ -729,10 +832,19 @@ app.get('/Tadmin-main-data', (req, res) => {
 // for initial update
 app.get('/setvalue', (req, res) => {
     try{
-        if (!req.session.user.username) {
-        return res.status(404).json({redirect: '/login', message: 'Please log in first'}); 
-        // Redirect to login page if not logged in
+       if ((!req.session.user || !req.session.user.username) && (!req.cookies.userData)) {
+        return res.status(404).json({ redirect: '/login', message: 'Please log in first' });
     }
+    if((!req.cookies.userData)){
+        return res.status(404).json({ redirect: '/login', message: 'Please log in first' });
+    }
+
+
+    if (!req.session.user || !req.session.user.username) {
+        const { username, admin } =decrypt(req.cookies.userData);
+        req.session.user = { username, admin };
+    }
+
     let email = req.session.user.username;
     const query = 'SELECT * FROM Profile WHERE user_id = ?';
 
@@ -752,9 +864,18 @@ app.get('/setvalue', (req, res) => {
 // for initial update
 app.get('/Tsetvalue', (req, res) => {
     try{
-        if (!req.session.user.username) {
-        return res.status(404).json({redirect: '/login', message: 'Please log in first'}); 
-        // Redirect to login page if not logged in
+        
+        if ((!req.session.user || !req.session.user.username) && (!req.cookies.userData)) {
+        return res.status(404).json({ redirect: '/login', message: 'Please log in first' });
+    }
+    if((!req.cookies.userData)){
+        return res.status(404).json({ redirect: '/login', message: 'Please log in first' });
+    }
+
+
+    if (!req.session.user || !req.session.user.username) {
+        const { username, admin } =decrypt(req.cookies.userData);
+        req.session.user = { username, admin };
     }
     let email = req.session.user.username;
     const query = 'SELECT * FROM Profile WHERE user_id = ?';
@@ -1000,8 +1121,13 @@ app.post('/getProfilescan', (req, res) => {
     try {
         // Check if the user is logged in
         // console.log("inside a scnner")
-        if (!req.session.user ||!req.session.user.username) {
-            return res.status(404).json({ redirect: '/login', message: 'Please log in first' });
+        if ((!req.session.user || !req.session.user.username) && (!req.cookies.userData)) {
+        return res.status(404).json({ redirect: '/login', message: 'Please log in first' });
+        }
+
+        if (!req.session.user || !req.session.user.username) {
+            const { username, admin } =decrypt(req.cookies.userData);
+            req.session.user = { username, admin };
         }
 
         const { id } = req.body; // Get id from the request body
