@@ -279,9 +279,7 @@ app.post('/check-absent', (req, res) => {
     // if (!req.session.user.username) {
     //     return res.status(404).json({redirect: '/login', message: 'Please log in first'}); 
     // }
-    if ((!req.session.user || !req.session.user.username) && (!req.cookies.userData)) {
-        return res.status(404).json({ redirect: '/login', message: 'Please log in first' });
-    }
+    
     if((!req.cookies.userData)){
         return res.status(404).json({ redirect: '/login', message: 'Please log in first' });
     }
@@ -372,9 +370,9 @@ app.post('/check-absent', (req, res) => {
     }
 });
 app.post('/Tcheck-absent', (req, res) => {
-    if ((!req.session.user || !req.session.user.username) && (!req.cookies.userData)) {
-        return res.status(404).json({ redirect: '/login', message: 'Please log in first' });
-    }
+    // if ((!req.session.user || !req.session.user.username) && (!req.cookies.userData)) {
+    //     return res.status(404).json({ redirect: '/login', message: 'Please log in first' });
+    // }
     if((!req.cookies.userData)){
         return res.status(404).json({ redirect: '/login', message: 'Please log in first' });
     }
@@ -519,9 +517,9 @@ app.post('/signup', (req, res) => {
 
 // Endpoint to get profile data
 app.post('/profile', (req, res) => {
-    if ((!req.session.user || !req.session.user.username) && (!req.cookies.userData)) {
-        return res.status(404).json({ redirect: '/login', message: 'Please log in first' });
-    }
+    // if ((!req.session.user || !req.session.user.username) && (!req.cookies.userData)) {
+    //     return res.status(404).json({ redirect: '/login', message: 'Please log in first' });
+    // }
     if((!req.cookies.userData)){
         return res.status(404).json({ redirect: '/login', message: 'Please log in first' });
     }
@@ -591,8 +589,8 @@ app.post('/login', (req, res) => {
 app.post('/choose-food', (req, res) => {
     try {
       // Modified: Added session check
-      if ((!req.session.user || !req.session.user.username) && (!req.cookies.userData)) {
-        return res.status(404).json({ redirect: '/login', message: 'Please log in first' });
+      if ((!req.cookies.userData)) {
+        return res.status(404).json({ redirect: '/login.html', message: 'Please log in first' });
         }
 
         if (!req.session.user || !req.session.user.username) {
@@ -625,12 +623,10 @@ app.post('/choose-food', (req, res) => {
 app.post('/Tchoose-food', (req, res) => {
     try {
       // Modified: Added session check
-      if ((!req.session.user || !req.session.user.username) && (!req.cookies.userData)) {
+      if ((!req.cookies.userData)) {
         return res.status(404).json({ redirect: '/login', message: 'Please log in first' });
     }
-    if((!req.cookies.userData)){
-        return res.status(404).json({ redirect: '/login', message: 'Please log in first' });
-    }
+    
 
 
     if (!req.session.user || !req.session.user.username) {
@@ -666,7 +662,7 @@ app.post('/Tchoose-food', (req, res) => {
 // Make admin endpoint
 app.post('/make-admin', (req, res) => {
     try{
-        if ((!req.session.user || !req.session.user.username) && (!req.cookies.userData)) {
+        if ((!req.cookies.userData)) {
         return res.status(404).json({ redirect: '/login', message: 'Please log in first' });
         }
 
@@ -708,9 +704,9 @@ app.post('/make-admin', (req, res) => {
 // Food Data
 app.get('/fooddata', (req, res) => {
     try{
-        if ((!req.session.user || !req.session.user.username) && (!req.cookies.userData)) {
-        return res.status(404).json({ redirect: '/login', message: 'Please log in first' });
-    }
+    //     if ((!req.session.user || !req.session.user.username) && (!req.cookies.userData)) {
+    //     return res.status(404).json({ redirect: '/login', message: 'Please log in first' });
+    // }
     if((!req.cookies.userData)){
         return res.status(404).json({ redirect: '/login', message: 'Please log in first' });
     }
@@ -762,12 +758,6 @@ app.post('/writedata', (req, res) => {
 app.get('/admin-main-data', (req, res) => {
     try{
         
-       if ((!req.session.user || !req.session.user.username) && (!req.cookies.userData)) {
-        return res.status(404).json({ redirect: '/login', message: 'Please log in first' });
-    }
-    if((!req.cookies.userData)){
-        return res.status(404).json({ redirect: '/login', message: 'Please log in first' });
-    }
 
     if((!req.cookies.userData)){
         return res.status(404).json({ redirect: '/login', message: 'Please log in first' });
@@ -798,9 +788,8 @@ app.get('/admin-main-data', (req, res) => {
 //Tomorrow Admin-main page endpoint
 app.get('/Tadmin-main-data', (req, res) => {
     try{
-        if ((!req.session.user || !req.session.user.username) && (!req.cookies.userData)) {
-        return res.status(404).json({ redirect: '/login', message: 'Please log in first' });
-    }
+        
+
     if((!req.cookies.userData)){
         return res.status(404).json({ redirect: '/login', message: 'Please log in first' });
     }
@@ -832,9 +821,7 @@ app.get('/Tadmin-main-data', (req, res) => {
 // for initial update
 app.get('/setvalue', (req, res) => {
     try{
-       if ((!req.session.user || !req.session.user.username) && (!req.cookies.userData)) {
-        return res.status(404).json({ redirect: '/login', message: 'Please log in first' });
-    }
+       
     if((!req.cookies.userData)){
         return res.status(404).json({ redirect: '/login', message: 'Please log in first' });
     }
@@ -865,9 +852,7 @@ app.get('/setvalue', (req, res) => {
 app.get('/Tsetvalue', (req, res) => {
     try{
         
-        if ((!req.session.user || !req.session.user.username) && (!req.cookies.userData)) {
-        return res.status(404).json({ redirect: '/login', message: 'Please log in first' });
-    }
+        
     if((!req.cookies.userData)){
         return res.status(404).json({ redirect: '/login', message: 'Please log in first' });
     }
@@ -1121,7 +1106,7 @@ app.post('/getProfilescan', (req, res) => {
     try {
         // Check if the user is logged in
         // console.log("inside a scnner")
-        if ((!req.session.user || !req.session.user.username) && (!req.cookies.userData)) {
+        if ((!req.cookies.userData)) {
         return res.status(404).json({ redirect: '/login', message: 'Please log in first' });
         }
 
@@ -1161,9 +1146,12 @@ app.post('/markAttendance', (req, res) => {
     // console.log("This is request body",req.body);
     const { id, breakfast, lunch, dinner } = req.body;
 
-    // Ensure the user is logged in (if applicable)
+    if ((!req.cookies.userData)) {
+    return res.status(404).json({ redirect: '/login', message: 'Please log in first' });
+    }
     if (!req.session.user || !req.session.user.username) {
-        return res.status(404).json({ redirect: '/login.html', message: 'Please log in first' });
+        const { username, admin } =decrypt(req.cookies.userData);
+        req.session.user = { username, admin };
     }
 
     
