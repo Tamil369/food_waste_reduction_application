@@ -12,6 +12,10 @@
             text-align: center;
             padding-left: 0;
         }
+        body *{
+            font-style:normal;
+            font-family: 'Times New Roman', Times, serif;
+        }
         .my {
             display: flex;
             justify-content: space-between;
@@ -46,12 +50,14 @@
         .container
         {
             margin: 10% 5% ;
-            display: flex;
+            display:flex;
             justify-content: center;
             border: 5.6px solid #938787; /* Add border */
             border-radius: 8px; /* Add border radius for rounded corners */
             box-shadow:50px 70px 10px rgba(0, 0, 0, 0.1); /* Add box shadow */
             margin-top: 10%; 
+            flex-direction: column;
+            position: relative;
         }
         .child
         {
@@ -98,7 +104,7 @@
         /* Overlay styles */
         /* Overlay styles */
         .overlay {
-            display: block;
+            display: none;
             position: fixed;
             z-index: 1000;
             left: 0;
@@ -148,11 +154,79 @@
             color: #555;
         }
 
+        /* style for scanner */
+        input[type="checkbox"]
+        {
+            display: none;
+        }
+        .check-label {
+            border: 2px solid transparent;
+            padding: 5px;
+            display: flexbox;
+            position: relative;
+            padding-left: 30px; /* Adjust padding to make space for the tick */
+            margin: 5px;
+            border: 1px solid rgb(194, 187, 187);
+            border-radius: 10%;
+            background-color: #e7d8d887;
+        }
+        .check-label:hover
+        {
+            cursor:grab;
+        }
+
+        .checked-label {
+            
+            border: 2px solid rgb(52, 227, 140);
+            border-radius: 10%;
+        }
+
+        .checked-label::after {
+            content: '✔';  
+            position: absolute;
+            left: 5px;  
+            top: 50%;  
+            transform: translateY(-50%);  
+            color: #00805c87;  
+            font-size: 20px;  
+        } 
+        #video {
+            position: absolute;
+            width: 100%;
+            max-width: 400px; /* Adjust this value for your design */
+            height: 200px;
+            border: 2px solid black;
+            display: block;
+            margin: 0 auto;
+        }
+        #result {
+            margin-top: 20px;
+            font-size: 18px;
+            font-weight: bold;
+        }
+        table {
+            margin-top: 20px;
+            border-collapse:separate;
+            width: 60%;
+            margin-left: auto;
+            margin-right: auto;
+            display: none; /* Initially hide the table */
+        }
+        th, td {
+            border: 1px solid black;
+            padding: 10px;
+            text-align: left;
+        }
+        th {
+            background-color: #f2f2f2;
+        }
 
 
 
     </style>
-
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/crypto-js/4.1.1/crypto-js.min.js"></script>
+    
+    <script src="https://cdn.jsdelivr.net/npm/jsqr/dist/jsQR.js"></script>
     
 
 </head>
@@ -176,13 +250,17 @@
             <div class="navbar-collapse collapse" id="navbarsExample01">
                 <ul class="navbar-nav me-auto mb-2">
                     <li class="nav-item">
-                        <a class="nav-link active" aria-current="page" href="./admine-home.html">Home</a>
+                        <a class="nav-link " aria-current="page" href="./admine-home.html">Home</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" href="./admine-main.html">Main page</a>
+                        <a class="nav-link active " href="./admine-main.html">Main page</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link active" aria-current="page" href="./choose-admin.html">choose-food</a>
+                        <a class="nav-link " aria-current="page" href="./choose-admin.html">choose-food</a>
+                    </li>
+
+                    <li class="nav-item"></li>
+                        <a class="nav-link" href="./make-admine.html">Make Admin</a>
                     </li>
                     
                     <li class="nav-item">
@@ -205,14 +283,42 @@
     <div class="out">  
         <div class="container">  
             
-            <form id="make-admin-form">
-                <label for="email"> <h6> User ID:</h6></label>
-                <input id="email" type="email" name="email" rows="4" cols="50" class="child  input" placeholder="Enter User id . . . . . . . .   " required></input><br>
-                <button type="submit" class="btn btn-secondary child" style="margin-left: 25%;" >Make Admin</button>
-                <p id="message"> </p>
-            </form>
+            <h1>QR Code Scanner with Decryption</h1>
+            <video id="video" autoplay></video>
+            <div id="result">Scanning for QR code...</div>
+            <br>
+
+            <div  id="checking">
+                <h3>Mark Present For:</h3>
+                <input type="checkbox" name="check-absent" id="forbf">
+                <label for="forbf"  class="check-label">BREAKFAST </label>
+                <input type="checkbox" name="check-absent" id="forlunch">
+                <label for="forlunch"  class="check-label">LUNCH</label>
+                <input type="checkbox" name="check-absent" id="fordinner">
+                <label for="fordinner"  class="check-label">DINNER</label>
+                <br>
+                <button type="button" id="buttonchecking" class="btn btn-outline-info" 
+                    style="margin:2% auto 10px 40%; font-weight: bolder ; color: rgb(88, 144, 125);" onclick="checking(event)">
+                    Submit
+                </button>
+            
+            </div>
+
+            <table id="dataTable">
+                <thead>
+                    <tr>
+                        <th>Detail</th>
+                        <th>Values</th>
+                    </tr>
+                </thead>
+                <tbody id="tableBody">
+                </tbody>
+            </table>
+
+            
             
         </div>
+        
     </div>
 
 
@@ -220,7 +326,7 @@
         <path d="M11 1a2 2 0 0 0-2 2v4a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V9a2 2 0 0 1 2-2h5V3a3 3 0 0 1 6 0v4a.5.5 0 0 1-1 0V3a2 2 0 0 0-2-2"/>
       </svg> 
     </button>
-    <div id="overlayx" class="overlayx" style="display: none;">
+    <div id="overlay" class="overlay">
         <div class="overlay-content">
             <span class="closebtn" >&times;</span>
             <form id="checkpassword-form">
@@ -245,43 +351,168 @@
     <script>
         /*****************WRITE YOUR JS CODE DOWN ***************DONT CHANGE ANYTHING**************** */
         document.addEventListener('DOMContentLoaded', function() {
-            const makeAdminForm = document.getElementById('make-admin-form');
+            
 
-            makeAdminForm.addEventListener('submit', function(event) {
-                event.preventDefault();
-
-                const formData = new FormData(makeAdminForm);
-                const email = formData.get('email');
-
-                fetch('/make-admin', {
-                    method: 'POST',
-                    credentials: 'include',
-                    headers: {
-                        'Content-Type': 'application/json'
-                    },
-                    body: JSON.stringify({ email })
-                })
-                .then(response => response.json())
-                .then(data => {
-                    
-                    if (data.ok) {
-                        alert(data.message); // Show success message
-                        window.location.reload();
+            // Adding checkbox event listeners
+            document.querySelectorAll('input[type="checkbox"]').forEach(checkbox => {
+                checkbox.addEventListener('change', function() {
+                    const label = document.querySelector(`label[for="${this.id}"]`);
+                    if (this.checked) {
+                        label.classList.add('checked-label');
                     } else {
-                        alert(data.message); // Show error message
-                        
+                        label.classList.remove('checked-label');
                     }
-                })
-                .catch(error => {
-                    console.error('Error:', error);
-                    document.getElementById('message').textContent = 'Error: ' + error.message;
-                    document.getElementById('message').style.color = 'red';
-                    alert('An error occurred. Please try again after login .');
-                    window.location.href = './login.html';
                 });
             });
-            makeAdminForm.reset();
+            checkMealTime();
+
+            
         });
+        
+        const video = document.getElementById('video');
+        const resultElement = document.getElementById('result');
+        const dataTable = document.getElementById('dataTable');
+        const tableBody = document.getElementById('tableBody');
+        const playButton = document.getElementById('playButton');
+        const decryptionKey = "GCE-Dharmapuri"; // The key used for encryption
+        let lastScanTime = 0;
+        const scanInterval = 500; // 500ms between scans
+        let tableData = {};
+
+            
+
+        // Function to request camera access and stream video to the video element
+        function startVideo() {
+            if (navigator.mediaDevices && navigator.mediaDevices.getUserMedia) {
+                navigator.mediaDevices.getUserMedia({ video: { facingMode: 'environment' } })
+                    .then(stream => {
+                        video.srcObject = stream;
+                        video.play();
+                        playButton.style.display = 'none'; // Hide play button if video plays
+                    })
+                    .catch(err => {
+                        console.error("Error accessing camera: ", err);
+                        resultElement.textContent = "Error accessing camera. Please allow camera access.";
+                    });
+            } else {
+                resultElement.textContent = "Your device does not support camera access.";
+            }
+        }
+
+        // Function to decrypt QR code data
+        function decryptData(encryptedData, key) {
+            // Decrypt with CryptoJS AES
+            const decrypted = CryptoJS.AES.decrypt(encryptedData, key);
+            const decryptedText = decrypted.toString(CryptoJS.enc.Utf8); // Get decrypted UTF-8 string
+            return decryptedText;
+        }
+
+        // Function to display JSON data in the table with custom labels
+        function displayDataInTable(data) {
+            // Clear existing table rows
+            tableBody.innerHTML = '';
+
+            // Create table rows for each key-value pair with custom labels
+            
+
+            Object.keys(data).forEach(key => {
+                const row = document.createElement('tr');
+                const labelCell = document.createElement('td');
+                const valueCell = document.createElement('td');
+
+                labelCell.textContent = labels[key] || key; // Use custom label if available
+                valueCell.textContent = data[key];
+
+                row.appendChild(labelCell);
+                row.appendChild(valueCell);
+                tableBody.appendChild(row);
+
+                tableData[key] = data[key];
+            });
+
+            // Show the table
+            dataTable.style.display = 'table';
+            console.log(tableData["name"]);
+        }
+
+        // Continuously scan the video for QR codes with performance optimization
+        video.addEventListener('play', () => {
+            const canvas = document.createElement('canvas');
+            const context = canvas.getContext('2d');
+
+            const scan = () => {
+                const now = Date.now();
+                if (now - lastScanTime > scanInterval) {
+                    lastScanTime = now;
+                    if (video.readyState === video.HAVE_ENOUGH_DATA) {
+                        canvas.height = video.videoHeight;
+                        canvas.width = video.videoWidth;
+                        context.drawImage(video, 0, 0, canvas.width, canvas.height);
+
+                        const imageData = context.getImageData(0, 0, canvas.width, canvas.height);
+                        const code = jsQR(imageData.data, imageData.width, imageData.height);
+
+                        if (code) {
+                            try {
+                                // Decrypt the QR code data using the secret key
+                                const decryptedData = decryptData(code.data, decryptionKey);
+
+                                // Log decrypted data for debugging
+                                console.log("Decrypted Data:", decryptedData);
+
+                                // Parse the decrypted data as JSON
+                                const jsonData = JSON.parse(decryptedData);
+
+                                // Display the decrypted data in the table
+                                displayDataInTable(jsonData);
+
+                            } catch (error) {
+                                resultElement.textContent = `Error: Invalid QR Code or Decryption failed.`;
+                            }
+
+                            // Pause the video when a QR code is detected
+                            video.pause();
+                        } else {
+                            resultElement.textContent = "Scanning for QR code...";
+                        }
+                    }
+                }
+                if (!video.paused) {
+                    requestAnimationFrame(scan);
+                }
+            };
+            scan();
+        });
+
+        // Play button fallback for mobile devices that do not autoplay video
+        
+
+        // Start the video on page load
+        startVideo();
+
+        function checkMealTime() {
+            const currentTime = new Date();
+            const currentHour = currentTime.getHours();
+
+            const breakfastCheckbox = document.getElementById('forbf');
+            const lunchCheckbox = document.getElementById('forlunch');
+            const dinnerCheckbox = document.getElementById('fordinner');
+
+            // Uncheck all boxes initially
+            breakfastCheckbox.checked = false;
+            lunchCheckbox.checked = false;
+            dinnerCheckbox.checked = false;
+
+            // Check the appropriate checkbox based on the time
+            if (currentHour >= 6 && currentHour <= 10) {
+                breakfastCheckbox.checked = true;
+            } else if (currentHour >= 12 && currentHour <= 14) {
+                lunchCheckbox.checked = true;
+            } else if (currentHour >= 16 && currentHour <= 21) {
+                dinnerCheckbox.checked = true;
+            }
+        }
+
 
         // Get elements
         const checkPasswordButton = document.getElementById('checkpassword');

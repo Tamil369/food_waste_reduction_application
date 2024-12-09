@@ -269,6 +269,7 @@
 
                 fetch('/login', {
                     method: 'POST',
+                    credentials: 'include',
                     headers: {
                         'Content-Type': 'application/json'
                     },
@@ -302,7 +303,9 @@
             });
 
             // data upload
-            fetch('/checkdate')
+            fetch('/checkdate',{
+                credentials: 'include'
+})
             .then(response => response.json())
             .then(data => {
                 if (data.message) {
